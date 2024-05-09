@@ -49,7 +49,7 @@ def login(school, username, password, ocr, driver):
 
 def initial():
     ocr = ddddocr.DdddOcr()
-    service = Service('chromedriver.exe')
+    service = Service("./chromedriver.exe")
     driver = uc.Chrome(service=service)
     driver.get('https://mooc.yinghuaonline.com/user/login')
     driver.implicitly_wait(3)
@@ -79,4 +79,3 @@ def begin():
         print('脚本执行出错')
 
 
-begin()
