@@ -49,25 +49,25 @@ def login(school, username, password, ocr, driver):
 
 def initial():
     ocr = ddddocr.DdddOcr()
-    service = Service("./chromedriver.exe")
-    driver = uc.Chrome(service=service)
-    driver.get('https://mooc.yinghuaonline.com/user/login')
+    driver = uc.Chrome(driver_executable_path="./chromedriver.exe")
+    # driver.get('https://mooc.yinghuaonline.com/user/login')
+    driver.get('https://shixun.canghuikeji.com/user/login')
     driver.implicitly_wait(3)
 
     return driver, ocr
 
 
 def begin():
-    school = "中南林业科技大学涉外学院"
-    username = 20218901
-    password = "qw789123"
+    school = "中南林业科技大学涉外学院实训平台"
+    username = 20218897
+    password = "18974623226Zr"
     print('声明：本工具完全免费，如果您是通过购买途径获得本工具，说明您已经上当受骗！')
     print('本工具由林科大涉外神秘人士制作')
 
     try:
         # school = input("请输入学校名称：")
-        username = input("请输入学号：")
-        password = input("请输入密码：")
+        # username = input("请输入学号：")
+        # password = input("请输入密码：")
         print('正在启动......')
         driver, ocr = initial()
         login(school, username, password, ocr, driver)
@@ -75,7 +75,6 @@ def begin():
     except NoSuchWindowException as e:
         print('浏览器已关闭，关闭窗口以退出程序')
         time.sleep(5000)
-    except Exception as ex:
-        print('脚本执行出错')
-
+    # except Exception as ex:
+    #     print('脚本执行出错')
 

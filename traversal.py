@@ -21,7 +21,7 @@ def traversal_course(driver, ocr):
             print('所有课程都已完成，无待刷课程')
             break
 
-        no_complete_course.find_element(By.CLASS_NAME, value="name").click()
+        no_complete_course.find_element(By.CLASS_NAME, value="name").find_element(By.TAG_NAME, value="a").click()
         time.sleep(2)
         continueButton = driver.find_element(By.XPATH, value="/html/body/div[3]/div[2]/div/div[1]/div[2]/div[6]/div[1]/a")
         continueButton.click()
