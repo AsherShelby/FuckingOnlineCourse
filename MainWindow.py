@@ -1,12 +1,16 @@
+import ctypes
+import threading
 from datetime import datetime
-from random import choices
 import ttkbootstrap as ttk
+from selenium.common import NoSuchWindowException
 from ttkbootstrap.style import Bootstyle
 from tkinter.filedialog import askdirectory
 from ttkbootstrap.dialogs import Messagebox
 from ttkbootstrap.constants import *
 from tkinter.scrolledtext import ScrolledText
 from pathlib import Path
+
+import FuckOnlineCourse
 from NewMissionWindow import DataEntryForm
 
 PATH = Path(__file__).parent / 'assets'
@@ -15,6 +19,9 @@ PATH = Path(__file__).parent / 'assets'
 class MainFrame(ttk.Frame):
     tv = None
     mission_list = []
+    curr_choose_index = 0
+    mission_begin_btn = None
+    threading_list = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -55,18 +62,20 @@ class MainFrame(ttk.Frame):
         )
         btn.pack(side=LEFT, ipadx=5, ipady=5, padx=(1, 0), pady=1)
 
-        ## backup
-        _func = lambda: Messagebox.ok(message='Backing up...')
-        btn = ttk.Button(
+        # backup
+        _func = lambda: self.mission_begin()
+        mission_begin_btn = ttk.Button(
             master=buttonbar,
             text='开始任务',
             image='play',
             compound=LEFT,
             command=_func
         )
-        btn.pack(side=LEFT, ipadx=5, ipady=5, padx=0, pady=1)
 
-        ## refresh
+        mission_begin_btn.pack(side=LEFT, ipadx=5, ipady=5, padx=0, pady=1)
+        self.mission_begin_btn = mission_begin_btn
+
+        # refresh
         _func = lambda: Messagebox.ok(message='Refreshing...')
         btn = ttk.Button(
             master=buttonbar,
@@ -77,8 +86,8 @@ class MainFrame(ttk.Frame):
         )
         btn.pack(side=LEFT, ipadx=5, ipady=5, padx=0, pady=1)
 
-        ## stop
-        _func = lambda: Messagebox.ok(message='Stopping backup.')
+        # stop
+        _func = lambda: self.stop_mission()
         btn = ttk.Button(
             master=buttonbar,
             text='停止任务',
@@ -88,7 +97,7 @@ class MainFrame(ttk.Frame):
         )
         btn.pack(side=LEFT, ipadx=5, ipady=5, padx=0, pady=1)
 
-        ## settings
+        # settings
         _func = lambda: Messagebox.ok(message='Changing settings')
         btn = ttk.Button(
             master=buttonbar,
@@ -103,11 +112,11 @@ class MainFrame(ttk.Frame):
         left_panel = ttk.Frame(self, style='bg.TFrame')
         left_panel.pack(side=LEFT, fill=Y)
 
-        ## backup summary (collapsible)
+        # backup summary (collapsible)
         bus_cf = CollapsingFrame(left_panel)
         bus_cf.pack(fill=X, pady=1)
 
-        ## container
+        # container
         bus_frm = ttk.Frame(bus_cf, padding=5)
         bus_frm.columnconfigure(1, weight=1)
         bus_cf.add(
@@ -115,32 +124,32 @@ class MainFrame(ttk.Frame):
             title='Backup Summary',
             bootstyle=SECONDARY)
 
-        ## destination
+        # destination
         lbl = ttk.Label(bus_frm, text='Destination:')
         lbl.grid(row=0, column=0, sticky=W, pady=2)
         lbl = ttk.Label(bus_frm, textvariable='destination')
         lbl.grid(row=0, column=1, sticky=EW, padx=5, pady=2)
         self.setvar('destination', 'd:/test/')
 
-        ## last run
+        # last run
         lbl = ttk.Label(bus_frm, text='Last Run:')
         lbl.grid(row=1, column=0, sticky=W, pady=2)
         lbl = ttk.Label(bus_frm, textvariable='lastrun')
         lbl.grid(row=1, column=1, sticky=EW, padx=5, pady=2)
         self.setvar('lastrun', '14.06.2021 19:34:43')
 
-        ## files Identical
+        # files Identical
         lbl = ttk.Label(bus_frm, text='Files Identical:')
         lbl.grid(row=2, column=0, sticky=W, pady=2)
         lbl = ttk.Label(bus_frm, textvariable='filesidentical')
         lbl.grid(row=2, column=1, sticky=EW, padx=5, pady=2)
         self.setvar('filesidentical', '15%')
 
-        ## section separator
+        # section separator
         sep = ttk.Separator(bus_frm, bootstyle=SECONDARY)
         sep.grid(row=3, column=0, columnspan=2, pady=10, sticky=EW)
 
-        ## properties button
+        # properties button
         _func = lambda: Messagebox.ok(message='Changing properties')
         bus_prop_btn = ttk.Button(
             master=bus_frm,
@@ -152,7 +161,7 @@ class MainFrame(ttk.Frame):
         )
         bus_prop_btn.grid(row=4, column=0, columnspan=2, sticky=W)
 
-        ## add to backup button
+        # add to backup button
         _func = lambda: Messagebox.ok(message='Adding to backup')
         add_btn = ttk.Button(
             master=bus_frm,
@@ -168,7 +177,7 @@ class MainFrame(ttk.Frame):
         status_cf = CollapsingFrame(left_panel)
         status_cf.pack(fill=BOTH, pady=1)
 
-        ## container
+        # container
         status_frm = ttk.Frame(status_cf, padding=10)
         status_frm.columnconfigure(1, weight=1)
         status_cf.add(
@@ -176,7 +185,7 @@ class MainFrame(ttk.Frame):
             title='Backup Status',
             bootstyle=SECONDARY
         )
-        ## progress message
+        # progress message
         lbl = ttk.Label(
             master=status_frm,
             textvariable='prog-message',
@@ -185,7 +194,7 @@ class MainFrame(ttk.Frame):
         lbl.grid(row=0, column=0, columnspan=2, sticky=W)
         self.setvar('prog-message', 'Backing up...')
 
-        ## progress bar
+        # progress bar
         pb = ttk.Progressbar(
             master=status_frm,
             variable='prog-value',
@@ -194,26 +203,26 @@ class MainFrame(ttk.Frame):
         pb.grid(row=1, column=0, columnspan=2, sticky=EW, pady=(10, 5))
         self.setvar('prog-value', 71)
 
-        ## time started
+        # time started
         lbl = ttk.Label(status_frm, textvariable='prog-time-started')
         lbl.grid(row=2, column=0, columnspan=2, sticky=EW, pady=2)
         self.setvar('prog-time-started', 'Started at: 14.06.2021 19:34:56')
 
-        ## time elapsed
+        # time elapsed
         lbl = ttk.Label(status_frm, textvariable='prog-time-elapsed')
         lbl.grid(row=3, column=0, columnspan=2, sticky=EW, pady=2)
         self.setvar('prog-time-elapsed', 'Elapsed: 1 sec')
 
-        ## time remaining
+        # time remaining
         lbl = ttk.Label(status_frm, textvariable='prog-time-left')
         lbl.grid(row=4, column=0, columnspan=2, sticky=EW, pady=2)
         self.setvar('prog-time-left', 'Left: 0 sec')
 
-        ## section separator
+        # section separator
         sep = ttk.Separator(status_frm, bootstyle=SECONDARY)
         sep.grid(row=5, column=0, columnspan=2, pady=10, sticky=EW)
 
-        ## stop button
+        # stop button
         _func = lambda: Messagebox.ok(message='Stopping backup')
         btn = ttk.Button(
             master=status_frm,
@@ -225,7 +234,7 @@ class MainFrame(ttk.Frame):
         )
         btn.grid(row=6, column=0, columnspan=2, sticky=W)
 
-        ## section separator
+        # section separator
         sep = ttk.Separator(status_frm, bootstyle=SECONDARY)
         sep.grid(row=7, column=0, columnspan=2, pady=10, sticky=EW)
 
@@ -242,22 +251,7 @@ class MainFrame(ttk.Frame):
         right_panel = ttk.Frame(self, padding=(2, 1))
         right_panel.pack(side=RIGHT, fill=BOTH, expand=YES)
 
-        # ## file input
-        # browse_frm = ttk.Frame(right_panel)
-        # browse_frm.pack(side=TOP, fill=X, padx=2, pady=1)
-
-        # file_entry = ttk.Entry(browse_frm, textvariable='folder-path')
-        # file_entry.pack(side=LEFT, fill=X, expand=YES)
-
-        # btn = ttk.Button(
-        #     master=browse_frm,
-        #     image='opened-folder',
-        #     bootstyle=(LINK, SECONDARY),
-        #     command=self.get_directory
-        # )
-        # btn.pack(side=RIGHT)
-
-        ## Treeview
+        # Treeview
         tv = ttk.Treeview(right_panel, show='headings', height=8)
         tv.configure(columns=(
             'name', 'state', 'creation-time',
@@ -274,7 +268,26 @@ class MainFrame(ttk.Frame):
         tv.pack(fill=X, pady=1)
 
         self.tv = tv
-        ## scrolling text output
+
+        def on_click_tree(event):
+            item = self.tv.identify_row(event.y)
+            self.curr_choose_index = int(item[-1]) - 1
+
+            if self.curr_choose_index < 0:
+                self.curr_choose_index = 0
+
+            state = self.tv.item(item)
+            print(state['values'][1])
+            if state['values'][1] == '运行中':
+                mission_begin_btn.config(state="disabled")
+            else:
+                mission_begin_btn.config(state="normal")
+
+            print("You clicked on item:", self.curr_choose_index)
+
+        self.tv.bind("<Button-1>", on_click_tree)
+
+        # scrolling text output
         scroll_cf = CollapsingFrame(right_panel)
         scroll_cf.pack(fill=BOTH, expand=True)
 
@@ -285,23 +298,6 @@ class MainFrame(ttk.Frame):
         st.pack(fill=BOTH, expand=True)
         scroll_cf.add(output_container, textvariable='scroll-message')
 
-        # seed with some sample data
-
-        ## starting sample directory
-        # file_entry.insert(END, 'D:/text/myfiles/top-secret/samples/')
-
-        ## treeview and backup logs
-        # for x in range(20, 35):
-        #     result = choices(['Backup Up', 'Missed in Destination'])[0]
-        #     st.insert(END, f'19:34:{x}\t\t Uploading: D:/file_{x}.txt\n')
-        #     st.insert(END, f'19:34:{x}\t\t Upload {result}.\n')
-        #     timestamp = datetime.now().strftime('%d.%m.%Y %H:%M:%S')
-        #     tv.insert('', END, x,
-        #               values=(f'sample_file_{x}.txt',
-        #                       result, timestamp, timestamp,)
-        #               )
-        # tv.selection_set(20)
-
     def get_directory(self):
         """Open dialogue to get directory and update variable"""
         self.update_idletasks()
@@ -309,10 +305,27 @@ class MainFrame(ttk.Frame):
         if d:
             self.setvar('folder-path', d)
 
+    def mission_begin(self):
+        if len(self.mission_list) == 0:
+            Messagebox.ok(message='任务列表为空')
+            return
+
+        self.mission_begin_btn.config(state="disabled")
+        selected_item = self.tv.selection()[0]
+        self.tv.set(selected_item, column='state', value='运行中')
+        t = Thread_with_exception(f'{self.curr_choose_index}', self.mission_list, self.curr_choose_index, self.tv,
+                                  self.mission_begin_btn)
+        t.start()
+        self.threading_list.append(t)
+
     def create_new_mission(self):
-        mission_infor_dic = {'name': '', 'school': '', 'id': '', 'password': ''}
+        mission_infor_dic = {'name': '', 'school': '', 'id': '', 'password': '', 'platform': ''}
+
         new_mission_window = ttk.Toplevel("新建任务", resizable=(False, False))
+        new_mission_window.attributes('-topmost', True)
         DataEntryForm(new_mission_window, mission_infor_dic)
+        new_mission_window.geometry(
+            f'600x400+{(new_mission_window.winfo_screenwidth() - 800) // 2}+{(new_mission_window.winfo_screenheight() - 400) // 2}')
         new_mission_window.mainloop()
         print(mission_infor_dic)
         self.mission_list.append(mission_infor_dic)
@@ -324,9 +337,12 @@ class MainFrame(ttk.Frame):
         #                       result, timestamp, timestamp,)
         #               )
 
+    def stop_mission(self):
+        self.threading_list[self.curr_choose_index].killing_self()
+        self.threading_list.pop(0)
+
 
 class CollapsingFrame(ttk.Frame):
-    """A collapsible frame widget that opens and closes with a click."""
 
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -407,3 +423,46 @@ class CollapsingFrame(ttk.Frame):
         else:
             child.grid()
             child.btn.configure(image=self.images[0])
+
+
+class Thread_with_exception(threading.Thread):
+    mission_list = []
+    curr_choose_index = 0
+    tv = None
+    mission_begin_btn = None
+
+    def __init__(self, name, mission_list, curr_choose_index, tv, mission_begin_btn):
+        threading.Thread.__init__(self)
+        self.name = name
+        self.mission_list = mission_list
+        self.curr_choose_index = curr_choose_index
+        self.tv = tv
+        self.mission_begin_btn = mission_begin_btn
+
+    def run(self):
+        # target function of the thread class
+        try:  # 用try/finally 的方式处理exception，从而kill thread
+            FuckOnlineCourse.begin(self.mission_list[self.curr_choose_index])
+        except NoSuchWindowException as e:
+            print('任务已结束')
+
+    def get_id(self):
+        # returns id of the respective thread
+        if hasattr(self, '_thread_id'):
+            return self._thread_id
+        for id, thread in threading._active.items():
+            if thread is self:
+                return id
+
+    def killing_self(self):
+        print('杀死线程')
+        thread_id = self.get_id()
+        selected_item = self.tv.selection()[0]
+        self.tv.set(selected_item, column='state', value='已停止')
+        self.mission_begin_btn.config(state='normal')
+        # 精髓就是这句话，给线程发过去一个exceptions，线程就那边响应完就停了
+        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id,
+                                                         ctypes.py_object(SystemExit))
+        if res > 1:
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
+            print('Exception raise failure')

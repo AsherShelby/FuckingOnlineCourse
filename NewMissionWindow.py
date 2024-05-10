@@ -1,5 +1,6 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
+from ttkbootstrap.dialogs import Messagebox
 
 
 class DataEntryForm(ttk.Frame):
@@ -16,6 +17,10 @@ class DataEntryForm(ttk.Frame):
         self.id = ttk.StringVar()
         self.password = ttk.StringVar()
         self.school = ttk.StringVar()
+        self.platform = ttk.StringVar()
+
+        school_lst = ['中南林业科技大学涉外学院', '北京嘉华大学工商学院']
+        platform_lst = ['英华学堂', '仓辉教育科技']
 
         # form header
         hdr_txt = "请输入任务信息："
@@ -24,7 +29,8 @@ class DataEntryForm(ttk.Frame):
 
         # form entries
         self.create_form_entry("任务名称", self.name)
-        self.create_form_entry("学校：", self.school)
+        self.create_form_combox("学校：", self.school, school_lst)
+        self.create_form_combox("平台：", self.platform, platform_lst)
         self.create_form_entry("学号：", self.id)
         self.create_form_entry("密码：", self.password)
         self.create_buttonbox()
@@ -38,6 +44,18 @@ class DataEntryForm(ttk.Frame):
         lbl.pack(side=LEFT, padx=5)
         container.pack(fill=X, expand=YES, pady=5)
         ent.pack(side=LEFT, padx=5, fill=X, expand=YES)
+
+    def create_form_combox(self, label, variable, lst):
+        container = ttk.Frame(self)
+        lbl = ttk.Label(master=container, text=label.title(), width=10)
+        # ddl = ttk.Entry(master=container, textvariable=variable)
+        ddl = ttk.Combobox(master=container, textvariable=variable)
+        ddl['value'] = lst
+        ddl['state'] = 'readonly'
+        ddl.current(0)
+        lbl.pack(side=LEFT, padx=5)
+        container.pack(fill=X, expand=YES, pady=3)
+        ddl.pack(side=LEFT, padx=5, fill=X, expand=YES)
 
     def create_buttonbox(self):
         """Create the application buttonbox"""
@@ -65,15 +83,24 @@ class DataEntryForm(ttk.Frame):
 
     def on_submit(self):
         """Print the contents to console and return the values."""
-        print("任务名称:", self.name.get())
-        print("学校:", self.school.get())
-        print("学号:", self.id.get())
-        print("密码:", self.password.get())
+        # print("任务名称:", self.name.get())
+        # print("学校:", self.school.get())
+        # print("学号:", self.id.get())
+        # print("密码:", self.password.get())
 
         self.mission_infor_dic['name'] = self.name.get()
         self.mission_infor_dic['school'] = self.school.get()
         self.mission_infor_dic['id'] = self.id.get()
         self.mission_infor_dic['password'] = self.password.get()
+        self.mission_infor_dic['platform'] = self.platform.get()
+
+        for value in self.mission_infor_dic.values():
+            if value == '':
+                Messagebox.ok(message='输入有空缺，请检查！')
+                return
+
+        if self.platform.get() == '仓辉教育科技':
+            self.mission_infor_dic['school'] += '实训平台'
 
         self.master.quit()
         self.master.destroy()
