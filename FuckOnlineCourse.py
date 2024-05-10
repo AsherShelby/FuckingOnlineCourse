@@ -1,3 +1,6 @@
+import tkinter
+import matplotlib
+import matplotlib.pyplot as plt
 import ddddocr
 import time
 import undetected_chromedriver as uc
@@ -7,6 +10,8 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.chrome.service import Service
 
 from traversal import traversal_course
+
+matplotlib.use('Agg')
 
 
 def find_school_value(school_name, driver):
@@ -60,7 +65,7 @@ def initial(platform):
     return driver, ocr
 
 
-def begin(dic):
+def begin(dic, scroll_text):
     school = dic['school']
     username = dic['id']
     password = dic['password']
@@ -68,14 +73,12 @@ def begin(dic):
     print('声明：本工具完全免费，如果您是通过购买途径获得本工具，说明您已经上当受骗！')
     print('本工具由林科大涉外神秘人士制作')
 
-
     # school = input("请输入学校名称：")
     # username = input("请输入学号：")
     # password = input("请输入密码：")
-    print('正在启动......')
+    # scroll_text.insert(tkinter.INSERT, '正在启动......')
     driver, ocr = initial(platform)
     login(school, username, password, ocr, driver)
     traversal_course(driver, ocr)
     # except Exception as ex:
     #     print('脚本执行出错')
-

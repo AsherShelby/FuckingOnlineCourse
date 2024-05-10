@@ -1,5 +1,7 @@
+
 import ctypes
 import threading
+import tkinter
 from datetime import datetime
 import ttkbootstrap as ttk
 from selenium.common import NoSuchWindowException
@@ -16,12 +18,17 @@ from NewMissionWindow import DataEntryForm
 PATH = Path(__file__).parent / 'assets'
 
 
+
 class MainFrame(ttk.Frame):
     tv = None
     mission_list = []
     curr_choose_index = 0
     mission_begin_btn = None
+    mission_stop_btn = None
     threading_list = []
+    scroll_text_list = []
+    output_container = None
+    after_scroll_text = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -88,14 +95,16 @@ class MainFrame(ttk.Frame):
 
         # stop
         _func = lambda: self.stop_mission()
-        btn = ttk.Button(
+        mission_stop_btn = ttk.Button(
             master=buttonbar,
             text='停止任务',
             image='stop-light',
             compound=LEFT,
             command=_func
         )
-        btn.pack(side=LEFT, ipadx=5, ipady=5, padx=0, pady=1)
+        mission_stop_btn.pack(side=LEFT, ipadx=5, ipady=5, padx=0, pady=1)
+
+        self.mission_stop_btn = mission_stop_btn
 
         # settings
         _func = lambda: Messagebox.ok(message='Changing settings')
@@ -278,11 +287,15 @@ class MainFrame(ttk.Frame):
 
             state = self.tv.item(item)
             print(state['values'][1])
+
             if state['values'][1] == '运行中':
                 mission_begin_btn.config(state="disabled")
             else:
                 mission_begin_btn.config(state="normal")
 
+            self.after_scroll_text.pack_forget()
+            self.scroll_text_list[self.curr_choose_index].pack(fill=BOTH, expand=True)
+            self.after_scroll_text = self.scroll_text_list[self.curr_choose_index]
             print("You clicked on item:", self.curr_choose_index)
 
         self.tv.bind("<Button-1>", on_click_tree)
@@ -290,11 +303,12 @@ class MainFrame(ttk.Frame):
         # scrolling text output
         scroll_cf = CollapsingFrame(right_panel)
         scroll_cf.pack(fill=BOTH, expand=True)
-
         output_container = ttk.Frame(scroll_cf, padding=1)
+        self.output_container = output_container
         _value = '任务日志'
         self.setvar('scroll-message', _value)
         st = ScrolledText(output_container)
+        self.after_scroll_text = st
         st.pack(fill=BOTH, expand=True)
         scroll_cf.add(output_container, textvariable='scroll-message')
 
@@ -311,33 +325,38 @@ class MainFrame(ttk.Frame):
             return
 
         self.mission_begin_btn.config(state="disabled")
+        self.mission_stop_btn.config(state="normal")
         selected_item = self.tv.selection()[0]
         self.tv.set(selected_item, column='state', value='运行中')
         t = Thread_with_exception(f'{self.curr_choose_index}', self.mission_list, self.curr_choose_index, self.tv,
-                                  self.mission_begin_btn)
+                                  self.mission_begin_btn, self.scroll_text_list)
+        t.daemon = True
         t.start()
         self.threading_list.append(t)
 
     def create_new_mission(self):
         mission_infor_dic = {'name': '', 'school': '', 'id': '', 'password': '', 'platform': ''}
-
         new_mission_window = ttk.Toplevel("新建任务", resizable=(False, False))
+
         new_mission_window.attributes('-topmost', True)
         DataEntryForm(new_mission_window, mission_infor_dic)
-        new_mission_window.geometry(
-            f'600x400+{(new_mission_window.winfo_screenwidth() - 800) // 2}+{(new_mission_window.winfo_screenheight() - 400) // 2}')
+        new_mission_window.geometry(f'600x400+{(new_mission_window.winfo_screenwidth() - 800) // 2}+{(new_mission_window.winfo_screenheight() - 400) // 2}')
         new_mission_window.mainloop()
         print(mission_infor_dic)
         self.mission_list.append(mission_infor_dic)
         timestamp = datetime.now().strftime('%Y.%d.%m - %H:%M:%S')
         self.tv.insert('', END, values=(mission_infor_dic['name'], '待运行', timestamp, timestamp))
 
-        # tv.insert('', END, x,
-        #               values=(f'sample_file_{x}.txt',
-        #                       result, timestamp, timestamp,)
-        #               )
+        logs = ScrolledText(self.output_container)
+        self.scroll_text_list.append(logs)
+
 
     def stop_mission(self):
+        if len(self.mission_list) == 0:
+            Messagebox.ok('任务列表为空')
+            return
+
+        self.mission_stop_btn.config(state="disabled")
         self.threading_list[self.curr_choose_index].killing_self()
         self.threading_list.pop(0)
 
@@ -430,19 +449,21 @@ class Thread_with_exception(threading.Thread):
     curr_choose_index = 0
     tv = None
     mission_begin_btn = None
+    scroll_text_list = []
 
-    def __init__(self, name, mission_list, curr_choose_index, tv, mission_begin_btn):
+    def __init__(self, name, mission_list, curr_choose_index, tv, mission_begin_btn, scroll_text_list):
         threading.Thread.__init__(self)
         self.name = name
         self.mission_list = mission_list
         self.curr_choose_index = curr_choose_index
         self.tv = tv
         self.mission_begin_btn = mission_begin_btn
+        self.scroll_text_list = scroll_text_list
 
     def run(self):
         # target function of the thread class
         try:  # 用try/finally 的方式处理exception，从而kill thread
-            FuckOnlineCourse.begin(self.mission_list[self.curr_choose_index])
+            FuckOnlineCourse.begin(self.mission_list[self.curr_choose_index], self.scroll_text_list[self.curr_choose_index])
         except NoSuchWindowException as e:
             print('任务已结束')
 
@@ -460,9 +481,8 @@ class Thread_with_exception(threading.Thread):
         selected_item = self.tv.selection()[0]
         self.tv.set(selected_item, column='state', value='已停止')
         self.mission_begin_btn.config(state='normal')
-        # 精髓就是这句话，给线程发过去一个exceptions，线程就那边响应完就停了
-        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id,
-                                                         ctypes.py_object(SystemExit))
+        # 给线程发过去一个exceptions，线程就那边响应完就停了
+        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, ctypes.py_object(SystemExit))
         if res > 1:
             ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
             print('Exception raise failure')
