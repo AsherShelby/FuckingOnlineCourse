@@ -3,7 +3,6 @@ import queue
 import threading
 from datetime import datetime
 from tkinter import font
-
 import ttkbootstrap as ttk
 from selenium.common import NoSuchWindowException
 from ttkbootstrap.style import Bootstyle
@@ -11,7 +10,6 @@ from tkinter.filedialog import askdirectory
 from ttkbootstrap.dialogs import Messagebox
 from ttkbootstrap.constants import *
 from tkinter.scrolledtext import ScrolledText
-
 import FuckOnlineCourse
 import frozen_dir
 from NewMissionWindow import DataEntryForm

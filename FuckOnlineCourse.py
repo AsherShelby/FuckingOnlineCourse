@@ -4,7 +4,6 @@ import time
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
-
 from traversal import traversal_course
 
 matplotlib.use('Agg')
