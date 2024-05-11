@@ -134,9 +134,17 @@ class MainFrame(ttk.Frame):
             bootstyle=SECONDARY)
 
         notice = ttk.ScrolledText(bus_frm, width=30)
-        notice.insert(ttk.INSERT, '1、使用前必须安装好Chrome浏览器（谷歌浏览器）\n\n')
-        notice.insert(ttk.INSERT, '2、点击“新建任务”，输入好信息，点确定\n\n')
+        notice.insert(ttk.INSERT, '使用教程 ----------\n\n')
+        notice.insert(ttk.INSERT, '1、使用前必须安装好Chrome浏览器（谷歌浏览器），暂时不支持其他类型浏览器\n\n')
+        notice.insert(ttk.INSERT, '2、点击“新建任务”，填好学校和账号等信息，点确定\n\n')
         notice.insert(ttk.INSERT, '3、再在任务栏里选中任务，点击开始任务即可\n\n')
+        notice.insert(ttk.INSERT, '4、若需要删除任务，可选中任务后，单击右键再点删除\n\n')
+
+        notice.insert(ttk.INSERT, '注意 ----------\n\n')
+        notice.insert(ttk.INSERT, '1、网课网站在凌晨12点以后会将账号强制踢下线，请挑选合适的时间使用\n\n')
+        notice.insert(ttk.INSERT, '2、进入到有视频的界面以后，如果视频的章节数与你之前刷的不符合，可以手动调整。\n\n')
+        notice.insert(ttk.INSERT, '3、本工具仅供学习交流使用，不保证100%不会被检测，请适度使用，如有损失概不负责！\n\n')
+
         notice.configure(state='disabled')
         notice.pack()
 
