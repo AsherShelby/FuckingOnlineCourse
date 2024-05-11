@@ -7,7 +7,6 @@ import undetected_chromedriver as uc
 from selenium.common import NoSuchElementException, NoSuchWindowException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
-from selenium.webdriver.chrome.service import Service
 
 from traversal import traversal_course
 
@@ -34,7 +33,8 @@ def login(school, username, password, ocr, driver):
     password_input.send_keys(password)
 
     while True:
-        time.sleep(2)
+        time.sleep(1)
+        url = driver.current_url
         vertifyImage = driver.find_element(By.ID, value='codeImg')
         image = vertifyImage.screenshot_as_png
         res = ocr.classification(image)
@@ -42,13 +42,11 @@ def login(school, username, password, ocr, driver):
         vertify_input.send_keys(res)
         loginButton = driver.find_element(By.XPATH, value='//*[@id="loginForm"]/div/div[6]/div/input[2]')
         loginButton.click()
-        time.sleep(2)
-
-        try:
+        time.sleep(1)
+        if url == driver.current_url:
             errorButton = driver.find_element(By.LINK_TEXT, value='确定')
             errorButton.click()
-        except NoSuchElementException as e:
-            print('\n登录成功')
+        else:
             break
 
 
@@ -60,7 +58,7 @@ def initial(platform):
         driver.get('https://mooc.yinghuaonline.com/user/login')
     elif platform == '仓辉教育科技':
         driver.get('https://shixun.canghuikeji.com/user/login')
-    driver.implicitly_wait(3)
+    driver.implicitly_wait(5)
 
     return driver, ocr
 
@@ -79,6 +77,6 @@ def begin(dic):
     # scroll_text.insert(tkinter.INSERT, '正在启动......')
     driver, ocr = initial(platform)
     login(school, username, password, ocr, driver)
-    traversal_course(driver, ocr)
+    traversal_course(driver, ocr, dic['platform'])
     # except Exception as ex:
     #     print('脚本执行出错')

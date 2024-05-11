@@ -10,12 +10,12 @@ from tkinter.filedialog import askdirectory
 from ttkbootstrap.dialogs import Messagebox
 from ttkbootstrap.constants import *
 from tkinter.scrolledtext import ScrolledText
-from pathlib import Path
 
 import FuckOnlineCourse
+import frozen_dir
 from NewMissionWindow import DataEntryForm
 
-PATH = Path(__file__).parent / 'assets'
+PATH = frozen_dir.app_path()
 
 
 class MainFrame(ttk.Frame):
@@ -50,9 +50,9 @@ class MainFrame(ttk.Frame):
         }
 
         self.photoimages = []
-        imgpath = Path(__file__).parent / 'assets'
+        imgpath = PATH + '\\assets\\'
         for key, val in image_files.items():
-            _path = imgpath / val
+            _path = imgpath + val
             self.photoimages.append(ttk.PhotoImage(name=key, file=_path))
 
         # buttonbar
@@ -140,7 +140,6 @@ class MainFrame(ttk.Frame):
         notice.configure(state='disabled')
         notice.pack()
 
-
         # logo
         lbl = ttk.Label(left_panel, image='logo', style='bg.TLabel')
         lbl.pack(side='bottom')
@@ -150,7 +149,7 @@ class MainFrame(ttk.Frame):
         right_panel.pack(side=RIGHT, fill=BOTH, expand=YES)
 
         # Treeview
-        tv = ttk.Treeview(right_panel, show='headings', height=8)
+        tv = ttk.Treeview(right_panel, show='headings', height=15)
         tv.configure(columns=(
             'name', 'state', 'creation-time',
             'run-time',
@@ -200,6 +199,16 @@ class MainFrame(ttk.Frame):
         st.pack(fill=BOTH, expand=True)
         scroll_cf.add(output_container, textvariable='scroll-message')
 
+        # create right click menu
+        menu = ttk.Menu(self.tv, tearoff=1)
+        menu.add_command(label="新建任务", command=self.create_new_mission)
+        menu.add_separator()
+        menu.add_command(label="删除", command=self.mission_delete)
+
+        def show_menu(event):
+            menu.post(event.x_root, event.y_root)
+        self.tv.bind("<Button-3>", show_menu)
+
     def get_directory(self):
         """Open dialogue to get directory and update variable"""
         self.update_idletasks()
@@ -220,10 +229,23 @@ class MainFrame(ttk.Frame):
         selected_item = self.tv.selection()[0]
         self.tv.set(selected_item, column='state', value='运行中')
         t = Thread_with_exception(f'{self.curr_choose_index}', self.mission_list, self.curr_choose_index, self.tv,
-                                  self.mission_begin_btn, self.scroll_text_list, self.message_list[self.curr_choose_index], self, selected_item)
+                                  self.mission_begin_btn, self.scroll_text_list,
+                                  self.message_list[self.curr_choose_index], self, selected_item)
         t.daemon = True
         t.start()
         self.threading_list.append(t)
+
+    def mission_delete(self):
+        if len(self.mission_list) == 0:
+            Messagebox.ok('先新建任务吧哥')
+            return
+        selected_item = self.tv.selection()[0]
+        self.tv.delete(selected_item)
+        self.mission_list.pop(self.curr_choose_index)
+        self.threading_list[self.curr_choose_index].killing_self()
+        self.threading_list.pop(self.curr_choose_index)
+        self.message_list.pop(self.curr_choose_index)
+        self.scroll_text_list.pop(self.curr_choose_index)
 
     def create_new_mission(self):
         mission_infor_dic = {'name': '', 'school': '', 'id': '', 'password': '', 'platform': ''}
@@ -257,7 +279,7 @@ class MainFrame(ttk.Frame):
         self.mission_begin_btn.config(state='normal')
 
         self.threading_list[self.curr_choose_index].killing_self()
-        self.threading_list.pop(0)
+        self.threading_list.pop(self.curr_choose_index)
 
 
 class CollapsingFrame(ttk.Frame):
@@ -269,8 +291,8 @@ class CollapsingFrame(ttk.Frame):
 
         # widget images
         self.images = [
-            ttk.PhotoImage(file=PATH / 'icons8_double_up_24px.png'),
-            ttk.PhotoImage(file=PATH / 'icons8_double_right_24px.png')
+            ttk.PhotoImage(file=PATH + '\\assets\\icons8_double_up_24px.png'),
+            ttk.PhotoImage(file=PATH + '\\assets\\icons8_double_right_24px.png')
         ]
 
     def add(self, child, title="", bootstyle=PRIMARY, **kwargs):
@@ -352,7 +374,8 @@ class Thread_with_exception(threading.Thread):
     que = None
     mainWindow = None
 
-    def __init__(self, name, mission_list, curr_choose_index, tv, mission_begin_btn, scroll_text_list, que, mainWindow, selected_item):
+    def __init__(self, name, mission_list, curr_choose_index, tv, mission_begin_btn, scroll_text_list, que, mainWindow,
+                 selected_item):
         threading.Thread.__init__(self)
         self.name = name
         self.mission_list = mission_list
@@ -370,7 +393,6 @@ class Thread_with_exception(threading.Thread):
             FuckOnlineCourse.begin(self.mission_list[self.curr_choose_index])
         except NoSuchWindowException as e:
             print('任务已结束')
-
 
     def get_id(self):
         # returns id of the respective thread

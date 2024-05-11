@@ -1,6 +1,13 @@
+import re
+
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox
+
+
+def has_chinese_char(text):
+    pattern = re.compile(r'[\u4e00-\u9fa5]')
+    return bool(pattern.search(text))
 
 
 class DataEntryForm(ttk.Frame):
@@ -94,9 +101,15 @@ class DataEntryForm(ttk.Frame):
         self.mission_infor_dic['password'] = self.password.get()
         self.mission_infor_dic['platform'] = self.platform.get()
 
-        for value in self.mission_infor_dic.values():
+        for key, value in self.mission_infor_dic.items():
             if value == '':
-                Messagebox.ok(message='输入有空缺，请检查！')
+                Messagebox.ok(message='你是不是还有一些东西没输入（敲脑袋）')
+                return
+            if key == 'id' and has_chinese_char(value):
+                Messagebox.ok(message='我活这么久第一次见中文学号')
+                return
+            if key == 'password' and has_chinese_char(value):
+                Messagebox.ok(message='我活这么久还是第一次见密码里有中文')
                 return
 
         if self.platform.get() == '仓辉教育科技':

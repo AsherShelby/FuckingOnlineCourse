@@ -10,13 +10,9 @@ def center_window(window, width, height):
     window.geometry(f"{width}x{height}+{x}+{y}")
 
 
-
-
 if __name__ == '__main__':
     window = ttk.Window()
-    window.title("Fucking网课 某学堂自动刷课 ------by ATD团队")
+    window.title("Fucking网课 某学堂自动刷课 ------by 林科大涉外神秘人士")
     center_window(window, 1360, 768)
     mainWindow = MainFrame(window)
     mainWindow.mainloop()
-
-
