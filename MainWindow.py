@@ -126,131 +126,20 @@ class MainFrame(ttk.Frame):
         bus_cf.pack(fill=X, pady=1)
 
         # container
-        bus_frm = ttk.Frame(bus_cf, padding=5)
+        bus_frm = ttk.Frame(bus_cf, padding=1)
         bus_frm.columnconfigure(1, weight=1)
         bus_cf.add(
             child=bus_frm,
-            title='Backup Summary',
+            title='使用教程',
             bootstyle=SECONDARY)
 
-        # destination
-        lbl = ttk.Label(bus_frm, text='Destination:')
-        lbl.grid(row=0, column=0, sticky=W, pady=2)
-        lbl = ttk.Label(bus_frm, textvariable='destination')
-        lbl.grid(row=0, column=1, sticky=EW, padx=5, pady=2)
-        self.setvar('destination', 'd:/test/')
+        notice = ttk.ScrolledText(bus_frm, width=30)
+        notice.insert(ttk.INSERT, '1、使用前必须安装好Chrome浏览器（谷歌浏览器）\n\n')
+        notice.insert(ttk.INSERT, '2、点击“新建任务”，输入好信息，点确定\n\n')
+        notice.insert(ttk.INSERT, '3、再在任务栏里选中任务，点击开始任务即可\n\n')
+        notice.configure(state='disabled')
+        notice.pack()
 
-        # last run
-        lbl = ttk.Label(bus_frm, text='Last Run:')
-        lbl.grid(row=1, column=0, sticky=W, pady=2)
-        lbl = ttk.Label(bus_frm, textvariable='lastrun')
-        lbl.grid(row=1, column=1, sticky=EW, padx=5, pady=2)
-        self.setvar('lastrun', '14.06.2021 19:34:43')
-
-        # files Identical
-        lbl = ttk.Label(bus_frm, text='Files Identical:')
-        lbl.grid(row=2, column=0, sticky=W, pady=2)
-        lbl = ttk.Label(bus_frm, textvariable='filesidentical')
-        lbl.grid(row=2, column=1, sticky=EW, padx=5, pady=2)
-        self.setvar('filesidentical', '15%')
-
-        # section separator
-        sep = ttk.Separator(bus_frm, bootstyle=SECONDARY)
-        sep.grid(row=3, column=0, columnspan=2, pady=10, sticky=EW)
-
-        # properties button
-        _func = lambda: Messagebox.ok(message='Changing properties')
-        bus_prop_btn = ttk.Button(
-            master=bus_frm,
-            text='Properties',
-            image='properties-dark',
-            compound=LEFT,
-            command=_func,
-            bootstyle=LINK
-        )
-        bus_prop_btn.grid(row=4, column=0, columnspan=2, sticky=W)
-
-        # add to backup button
-        _func = lambda: Messagebox.ok(message='Adding to backup')
-        add_btn = ttk.Button(
-            master=bus_frm,
-            text='Add to backup',
-            image='add-to-backup-dark',
-            compound=LEFT,
-            command=_func,
-            bootstyle=LINK
-        )
-        add_btn.grid(row=5, column=0, columnspan=2, sticky=W)
-
-        # backup status (collapsible)
-        status_cf = CollapsingFrame(left_panel)
-        status_cf.pack(fill=BOTH, pady=1)
-
-        # container
-        status_frm = ttk.Frame(status_cf, padding=10)
-        status_frm.columnconfigure(1, weight=1)
-        status_cf.add(
-            child=status_frm,
-            title='Backup Status',
-            bootstyle=SECONDARY
-        )
-        # progress message
-        lbl = ttk.Label(
-            master=status_frm,
-            textvariable='prog-message',
-            font='Helvetica 10 bold'
-        )
-        lbl.grid(row=0, column=0, columnspan=2, sticky=W)
-        self.setvar('prog-message', 'Backing up...')
-
-        # progress bar
-        pb = ttk.Progressbar(
-            master=status_frm,
-            variable='prog-value',
-            bootstyle=SUCCESS
-        )
-        pb.grid(row=1, column=0, columnspan=2, sticky=EW, pady=(10, 5))
-        self.setvar('prog-value', 71)
-
-        # time started
-        lbl = ttk.Label(status_frm, textvariable='prog-time-started')
-        lbl.grid(row=2, column=0, columnspan=2, sticky=EW, pady=2)
-        self.setvar('prog-time-started', 'Started at: 14.06.2021 19:34:56')
-
-        # time elapsed
-        lbl = ttk.Label(status_frm, textvariable='prog-time-elapsed')
-        lbl.grid(row=3, column=0, columnspan=2, sticky=EW, pady=2)
-        self.setvar('prog-time-elapsed', 'Elapsed: 1 sec')
-
-        # time remaining
-        lbl = ttk.Label(status_frm, textvariable='prog-time-left')
-        lbl.grid(row=4, column=0, columnspan=2, sticky=EW, pady=2)
-        self.setvar('prog-time-left', 'Left: 0 sec')
-
-        # section separator
-        sep = ttk.Separator(status_frm, bootstyle=SECONDARY)
-        sep.grid(row=5, column=0, columnspan=2, pady=10, sticky=EW)
-
-        # stop button
-        _func = lambda: Messagebox.ok(message='Stopping backup')
-        btn = ttk.Button(
-            master=status_frm,
-            text='停止任务',
-            image='stop-backup-dark',
-            compound=LEFT,
-            command=_func,
-            bootstyle=LINK
-        )
-        btn.grid(row=6, column=0, columnspan=2, sticky=W)
-
-        # section separator
-        sep = ttk.Separator(status_frm, bootstyle=SECONDARY)
-        sep.grid(row=7, column=0, columnspan=2, pady=10, sticky=EW)
-
-        # current file message
-        lbl = ttk.Label(status_frm, textvariable='current-file-msg')
-        lbl.grid(row=8, column=0, columnspan=2, pady=2, sticky=EW)
-        self.setvar('current-file-msg', 'Uploading: d:/test/settings.txt')
 
         # logo
         lbl = ttk.Label(left_panel, image='logo', style='bg.TLabel')
@@ -280,10 +169,9 @@ class MainFrame(ttk.Frame):
 
         def on_click_tree(event):
             item = self.tv.identify_row(event.y)
+            if len(item) == 0:
+                return
             self.curr_choose_index = int(item[-1]) - 1
-
-            if self.curr_choose_index < 0:
-                self.curr_choose_index = 0
 
             state = self.tv.item(item)
             print(state['values'][1])
