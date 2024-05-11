@@ -10,14 +10,13 @@ def center_window(window, width, height):
     window.geometry(f"{width}x{height}+{x}+{y}")
 
 
-def init_window(root):
-    MainFrame(root)
 
 
 if __name__ == '__main__':
-    mainWindow = ttk.Window()
-    mainWindow.title("Fucking网课 某学堂自动刷课 ------by ATD团队")
-    center_window(mainWindow, 1360, 768)
-    init_window(mainWindow)
-
+    window = ttk.Window()
+    window.title("Fucking网课 某学堂自动刷课 ------by ATD团队")
+    center_window(window, 1360, 768)
+    mainWindow = MainFrame(window)
     mainWindow.mainloop()
+
+

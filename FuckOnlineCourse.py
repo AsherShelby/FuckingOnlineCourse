@@ -65,12 +65,12 @@ def initial(platform):
     return driver, ocr
 
 
-def begin(dic, scroll_text):
+def begin(dic):
     school = dic['school']
     username = dic['id']
     password = dic['password']
     platform = dic['platform']
-    print('声明：本工具完全免费，如果您是通过购买途径获得本工具，说明您已经上当受骗！')
+    # print('声明：本工具完全免费，如果您是通过购买途径获得本工具，说明您已经上当受骗！')
     print('本工具由林科大涉外神秘人士制作')
 
     # school = input("请输入学校名称：")
