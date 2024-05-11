@@ -145,6 +145,11 @@ class MainFrame(ttk.Frame):
         notice.insert(ttk.INSERT, '2、进入到有视频的界面以后，如果视频的章节数与你之前刷的不符合，可以手动调整。\n\n')
         notice.insert(ttk.INSERT, '3、本工具仅供学习交流使用，不保证100%不会被检测，请适度使用，如有损失概不负责！\n\n')
 
+        notice.insert(ttk.INSERT, '关于 ----------\n\n')
+        notice.insert(ttk.INSERT, '本工具GitHub项目地址：https://github.com/AsherShelby/FuckingOnlineCourse\n\n')
+        notice.insert(ttk.INSERT, '欢迎大家支持！\n\n')
+
+
         notice.configure(state='disabled')
         notice.pack()
 
