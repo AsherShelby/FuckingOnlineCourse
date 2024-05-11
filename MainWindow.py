@@ -105,6 +105,7 @@ class MainFrame(ttk.Frame):
             command=_func
         )
         mission_stop_btn.pack(side=LEFT, ipadx=5, ipady=5, padx=0, pady=1)
+        mission_stop_btn.config(state=DISABLED)
 
         self.mission_stop_btn = mission_stop_btn
 
@@ -194,8 +195,13 @@ class MainFrame(ttk.Frame):
 
             if state['values'][1] == '运行中':
                 mission_begin_btn.config(state="disabled")
+                mission_stop_btn.config(state="normal")
+            elif state['values'][1] == '待运行':
+                mission_stop_btn.config(state="disabled")
+                mission_begin_btn.config(state="normal")
             else:
                 mission_begin_btn.config(state="normal")
+                mission_stop_btn.config(state="disabled")
 
             self.after_scroll_text.pack_forget()
             self.scroll_text_list[self.curr_choose_index].pack(fill=BOTH, expand=True)
