@@ -15,4 +15,7 @@ if __name__ == '__main__':
     window.title("Fucking网课 某学堂自动刷课 ------by 林科大涉外神秘人士")
     center_window(window, 1360, 768)
     mainWindow = MainFrame(window)
+    style = ttk.Style()
+    style.configure("Treeview", rowheight=35)
+
     mainWindow.mainloop()

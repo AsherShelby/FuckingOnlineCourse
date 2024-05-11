@@ -3,6 +3,8 @@ import queue
 import threading
 import tkinter
 from datetime import datetime
+from tkinter import font
+
 import ttkbootstrap as ttk
 from selenium.common import NoSuchWindowException
 from ttkbootstrap.style import Bootstyle
@@ -133,7 +135,8 @@ class MainFrame(ttk.Frame):
             title='使用教程',
             bootstyle=SECONDARY)
 
-        notice = ttk.ScrolledText(bus_frm, width=30)
+        custom_font = font.Font(family="微软雅黑", size=10)
+        notice = ttk.ScrolledText(bus_frm, width=30, font=custom_font)
         notice.insert(ttk.INSERT, '使用教程 ----------\n\n')
         notice.insert(ttk.INSERT, '1、使用前必须安装好Chrome浏览器（谷歌浏览器），暂时不支持其他类型浏览器\n\n')
         notice.insert(ttk.INSERT, '2、点击“新建任务”，填好学校和账号等信息，点确定\n\n')
@@ -146,6 +149,7 @@ class MainFrame(ttk.Frame):
         notice.insert(ttk.INSERT, '3、本工具仅供学习交流使用，不保证100%不会被检测，请适度使用，如有损失概不负责！\n\n')
 
         notice.insert(ttk.INSERT, '关于 ----------\n\n')
+        notice.insert(ttk.INSERT, '本工具由林科大涉外神秘人士制作，你要问我是谁，欸嘿，不告诉你~\n\n')
         notice.insert(ttk.INSERT, '本工具GitHub项目地址：https://github.com/AsherShelby/FuckingOnlineCourse\n\n')
         notice.insert(ttk.INSERT, '欢迎大家支持！\n\n')
 
@@ -162,7 +166,7 @@ class MainFrame(ttk.Frame):
         right_panel.pack(side=RIGHT, fill=BOTH, expand=YES)
 
         # Treeview
-        tv = ttk.Treeview(right_panel, show='headings', height=15)
+        tv = ttk.Treeview(right_panel, show='headings', height=8)
         tv.configure(columns=(
             'name', 'state', 'creation-time',
             'run-time',
