@@ -1,10 +1,7 @@
-import tkinter
 import matplotlib
-import matplotlib.pyplot as plt
 import ddddocr
 import time
 import undetected_chromedriver as uc
-from selenium.common import NoSuchElementException, NoSuchWindowException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
@@ -69,7 +66,7 @@ def begin(dic):
     password = dic['password']
     platform = dic['platform']
     # print('声明：本工具完全免费，如果您是通过购买途径获得本工具，说明您已经上当受骗！')
-    print('本工具由林科大涉外神秘人士制作')
+    # print('本工具由林科大涉外神秘人士制作')
 
     # school = input("请输入学校名称：")
     # username = input("请输入学号：")

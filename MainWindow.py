@@ -1,7 +1,6 @@
 import ctypes
 import queue
 import threading
-import tkinter
 from datetime import datetime
 from tkinter import font
 
