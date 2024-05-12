@@ -120,8 +120,3 @@ class DataEntryForm(ttk.Frame):
     #     """Cancel and close the application."""
     #     self.destroy()
 
-# def create_mission_window():
-#     app = ttk.Window("Data Entry",  resizable=(False, False))
-#     DataEntryForm(app)
-#
-#     app.mainloop()

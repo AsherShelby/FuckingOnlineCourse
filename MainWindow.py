@@ -135,6 +135,7 @@ class MainFrame(ttk.Frame):
 
         custom_font = font.Font(family="微软雅黑", size=10)
         notice = ttk.ScrolledText(bus_frm, width=30, font=custom_font)
+
         notice.insert(ttk.INSERT, '使用教程 ----------\n\n')
         notice.insert(ttk.INSERT, '1、使用前必须安装好Chrome浏览器（谷歌浏览器），暂时不支持其他类型浏览器\n\n')
         notice.insert(ttk.INSERT, '2、点击“新建任务”，填好学校和账号等信息，点确定\n\n')
@@ -149,8 +150,7 @@ class MainFrame(ttk.Frame):
         notice.insert(ttk.INSERT, '关于 ----------\n\n')
         notice.insert(ttk.INSERT, '本工具由林科大涉外神秘人士制作，你要问我是谁，欸嘿，不告诉你~\n\n')
         notice.insert(ttk.INSERT, '本工具GitHub项目地址：https://github.com/AsherShelby/FuckingOnlineCourse\n\n')
-        notice.insert(ttk.INSERT, '欢迎大家支持！\n\n')
-
+        notice.insert(ttk.INSERT, '欢迎大家支持！^_^\n\n')
 
         notice.configure(state='disabled')
         notice.pack()
@@ -182,7 +182,7 @@ class MainFrame(ttk.Frame):
         self.tv = tv
 
         def on_click_tree(event):
-            item = self.tv.identify_row(event.y)
+            item = self.tv.selection()[0]
             if len(item) == 0:
                 return
             self.curr_choose_index = int(item[-1]) - 1
@@ -205,7 +205,7 @@ class MainFrame(ttk.Frame):
             self.after_scroll_text = self.scroll_text_list[self.curr_choose_index]
             print("You clicked on item:", self.curr_choose_index)
 
-        self.tv.bind("<Button-1>", on_click_tree)
+        self.tv.bind("<ButtonRelease-1>", on_click_tree)
 
         # scrolling text output
         scroll_cf = CollapsingFrame(right_panel)
@@ -246,14 +246,13 @@ class MainFrame(ttk.Frame):
 
         self.mission_begin_btn.config(state="disabled")
         self.mission_stop_btn.config(state="normal")
+
         selected_item = self.tv.selection()[0]
         self.tv.set(selected_item, column='state', value='运行中')
-        t = Thread_with_exception(f'{self.curr_choose_index}', self.mission_list, self.curr_choose_index, self.tv,
-                                  self.mission_begin_btn, self.scroll_text_list,
-                                  self.message_list[self.curr_choose_index], self, selected_item)
-        t.daemon = True
-        t.start()
-        self.threading_list.append(t)
+        timestamp = datetime.now().strftime('%Y.%d.%m - %H:%M:%S')
+        self.tv.set(selected_item, column='run-time', value=timestamp)
+
+        self.threading_list[self.curr_choose_index].start()
 
     def mission_delete(self):
         if len(self.mission_list) == 0:
@@ -273,8 +272,7 @@ class MainFrame(ttk.Frame):
 
         new_mission_window.attributes('-topmost', True)
         DataEntryForm(new_mission_window, mission_infor_dic)
-        new_mission_window.geometry(
-            f'600x400+{(new_mission_window.winfo_screenwidth() - 800) // 2}+{(new_mission_window.winfo_screenheight() - 400) // 2}')
+        new_mission_window.geometry( f'600x400+{(new_mission_window.winfo_screenwidth() - 800) // 2}+{(new_mission_window.winfo_screenheight() - 400) // 2}')
         new_mission_window.mainloop()
         print(mission_infor_dic)
         self.mission_list.append(mission_infor_dic)
@@ -283,6 +281,10 @@ class MainFrame(ttk.Frame):
 
         logs = ScrolledText(self.output_container)
         self.scroll_text_list.append(logs)
+
+        t = Thread_with_exception(f'Threading {self.curr_choose_index}', self.mission_list, self.curr_choose_index)
+        t.daemon = True
+        self.threading_list.append(t)
 
         q = queue.Queue()
         self.message_list.append(q)
@@ -386,30 +388,18 @@ class CollapsingFrame(ttk.Frame):
 
 
 class Thread_with_exception(threading.Thread):
-    mission_list = []
-    curr_choose_index = 0
-    tv = None
-    mission_begin_btn = None
-    scroll_text_list = []
-    que = None
-    mainWindow = None
 
-    def __init__(self, name, mission_list, curr_choose_index, tv, mission_begin_btn, scroll_text_list, que, mainWindow,
-                 selected_item):
+    def __init__(self, name, mission_list, curr_choose_index):
         threading.Thread.__init__(self)
         self.name = name
         self.mission_list = mission_list
         self.curr_choose_index = curr_choose_index
-        self.tv = tv
-        self.mission_begin_btn = mission_begin_btn
-        self.scroll_text_list = scroll_text_list
-        self.que = que
-        self.mainWindow = mainWindow
-        self.selected_item = selected_item
 
     def run(self):
         # target function of the thread class
         try:  # 用try/finally 的方式处理exception，从而kill thread
+            print(self.curr_choose_index)
+            print(self.mission_list)
             FuckOnlineCourse.begin(self.mission_list[self.curr_choose_index])
         except NoSuchWindowException as e:
             print('任务已结束')

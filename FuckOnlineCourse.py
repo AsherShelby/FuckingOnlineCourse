@@ -64,15 +64,8 @@ def begin(dic):
     username = dic['id']
     password = dic['password']
     platform = dic['platform']
-    # print('声明：本工具完全免费，如果您是通过购买途径获得本工具，说明您已经上当受骗！')
-    # print('本工具由林科大涉外神秘人士制作')
 
-    # school = input("请输入学校名称：")
-    # username = input("请输入学号：")
-    # password = input("请输入密码：")
-    # scroll_text.insert(tkinter.INSERT, '正在启动......')
     driver, ocr = initial(platform)
     login(school, username, password, ocr, driver)
     traversal_course(driver, ocr, dic['platform'])
-    # except Exception as ex:
-    #     print('脚本执行出错')
+

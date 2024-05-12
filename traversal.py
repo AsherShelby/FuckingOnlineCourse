@@ -1,4 +1,6 @@
 import time
+
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 
@@ -40,9 +42,6 @@ def traversal_course(driver, ocr, platform):
             try:
                 browser_url = driver.current_url
 
-                if browser_url != driver.current_url:
-                    raise link_changed("页面已跳转")
-
                 videoSlot = driver.find_element(By.CLASS_NAME, value="detmain-navlist")
                 videoList = videoSlot.find_elements(By.XPATH, value="./*")
                 currVideoListIndex = 0
@@ -53,23 +52,24 @@ def traversal_course(driver, ocr, platform):
                         break
                     else:
                         currVideoListIndex += 1
-                itemList = videoList[currVideoListIndex].find_element(By.CLASS_NAME, value="list").find_elements(
-                    By.CLASS_NAME,
-                    value="item")
 
+                itemList = videoList[currVideoListIndex].find_element(By.CLASS_NAME, value="list").find_elements(By.CLASS_NAME, value="item")
                 for video in itemList:
                     if video.find_element(By.TAG_NAME, value="a").get_attribute("class") == "on":
                         break
                     else:
                         currVideoIndex += 1
+
+                if browser_url != driver.current_url:
+                    raise link_changed("页面已跳转")
+
                 print(f"""正在播放第{currVideoListIndex + 1}章, 第{currVideoIndex + 1}节...""")
 
                 isNew = False
                 for i in range(currVideoListIndex, len(videoList)):
                     videoSlot = driver.find_element(By.CLASS_NAME, value="detmain-navlist")
                     videoList = videoSlot.find_elements(By.XPATH, value="./*")
-                    itemList = videoList[i].find_element(By.CLASS_NAME, value="list").find_elements(By.CLASS_NAME,
-                                                                                                    value="item")
+                    itemList = videoList[i].find_element(By.CLASS_NAME, value="list").find_elements(By.CLASS_NAME, value="item")
 
                     if browser_url != driver.current_url:
                         raise link_changed("页面已跳转")
@@ -77,18 +77,14 @@ def traversal_course(driver, ocr, platform):
                     for j in range(currVideoIndex, len(itemList)):
                         if j != currVideoIndex or isNew:
                             itemList[j].click()
-
-
-                        if browser_url != driver.current_url:
+                        elif browser_url != driver.current_url:
                             raise link_changed("页面已跳转")
 
                         videoSlot = driver.find_element(By.CLASS_NAME, value="detmain-navlist")
                         videoList = videoSlot.find_elements(By.XPATH, value="./*")
-                        itemList = videoList[i].find_element(By.CLASS_NAME, value="list").find_elements(By.CLASS_NAME,
-                                                                                                        value="item")
+                        itemList = videoList[i].find_element(By.CLASS_NAME, value="list").find_elements(By.CLASS_NAME, value="item")
+                        playButton = driver.find_element(By.XPATH, value='//*[@id="videoContent"]/div/div[2]/div[1]/canvas')
 
-                        playButton = driver.find_element(By.XPATH,
-                                                         value='//*[@id="videoContent"]/div/div[2]/div[1]/canvas')
                         while True:
                             playButton.click()
                             time.sleep(1)
@@ -104,25 +100,15 @@ def traversal_course(driver, ocr, platform):
                                 time.sleep(1)
                                 playButton2 = driver.find_element(By.LINK_TEXT, value='开始播放')
                                 playButton2.click()
-
-                                if browser_url != driver.current_url:
-                                    raise link_changed("页面已跳转")
                             except:
-                                print('无需输入验证码')
-
-                            detectPlayButton = driver.find_element(By.XPATH,
-                                                                   value='//*[@id="videoContent"]/div/div[2]/div[1]')
-                            videoStyle = detectPlayButton.get_attribute('style')
-                            if 'none' in videoStyle:
-                                print('开始播放...')
+                                print('已开始播放')
                                 break
-                            else:
-
-                                if browser_url != driver.current_url:
-                                    raise link_changed("页面已跳转")
 
                         while True:
                             try:
+                                if browser_url != driver.current_url:
+                                    raise link_changed("页面已跳转")
+
                                 playingTimeElement = driver.find_element(By.XPATH, value="//*[starts-with(@class, 'timetext')]")
                                 playingTimeText = playingTimeElement.text
                                 textList = playingTimeText.split()
@@ -131,11 +117,8 @@ def traversal_course(driver, ocr, platform):
                                 elif textList[0] == textList[2]:
                                     print('播放完毕！')
                                     break
-                            except:
+                            except NoSuchElementException as e:
                                 print('找不到播放时间元素')
-
-                            if browser_url != driver.current_url:
-                                raise link_changed("页面已跳转")
 
                         if j == len(itemList) - 1:
                             currVideoIndex = 0
@@ -149,11 +132,9 @@ def traversal_course(driver, ocr, platform):
                             else:
                                 raise traversal_over("已刷完")
 
-
-
-
             except link_changed as e:
                 print('页面已跳转')
+                continue
             except traversal_over as o:
                 print('已刷完一门网课')
                 js = "window.location.replace('https://swxymooc.csuft.edu.cn/user')"
