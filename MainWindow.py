@@ -231,7 +231,7 @@ class MainFrame(ttk.Frame):
         self.tv.bind("<Button-3>", show_menu)
 
     def get_directory(self):
-        """Open dialogue to get directory and update variable"""
+        """ Open dialogue to get directory and update variable """
         self.update_idletasks()
         d = askdirectory()
         if d:
