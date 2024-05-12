@@ -186,7 +186,7 @@ class MainFrame(ttk.Frame):
             item = self.tv.selection()[0]
             if len(item) == 0:
                 return
-            self.curr_choose_index = int(item[-1]) - 1
+            self.curr_choose_index = self.tv.index(item)
 
             state = self.tv.item(item)
             print(state['values'][1])
@@ -201,9 +201,9 @@ class MainFrame(ttk.Frame):
                 mission_begin_btn.config(state="normal")
                 mission_stop_btn.config(state="disabled")
 
-            self.after_scroll_text.pack_forget()
-            self.scroll_text_list[self.curr_choose_index].pack(fill=BOTH, expand=True)
-            self.after_scroll_text = self.scroll_text_list[self.curr_choose_index]
+            # self.after_scroll_text.pack_forget()
+            # self.scroll_text_list[self.curr_choose_index].pack(fill=BOTH, expand=True)
+            # self.after_scroll_text = self.scroll_text_list[self.curr_choose_index]
             print("You clicked on item:", self.curr_choose_index)
 
         self.tv.bind("<ButtonRelease-1>", on_click_tree)
