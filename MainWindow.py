@@ -13,6 +13,7 @@ from tkinter.scrolledtext import ScrolledText
 import FuckOnlineCourse
 import frozen_dir
 from NewMissionWindow import DataEntryForm
+from PIL import ImageTk, Image
 
 PATH = frozen_dir.app_path()
 
@@ -52,7 +53,7 @@ class MainFrame(ttk.Frame):
         imgpath = PATH + '\\assets\\'
         for key, val in image_files.items():
             _path = imgpath + val
-            self.photoimages.append(ttk.PhotoImage(name=key, file=_path))
+            self.photoimages.append(ImageTk.PhotoImage(name=key, file=_path))
 
         # buttonbar
         buttonbar = ttk.Frame(self, style='primary.TFrame')
@@ -81,16 +82,16 @@ class MainFrame(ttk.Frame):
         mission_begin_btn.pack(side=LEFT, ipadx=5, ipady=5, padx=0, pady=1)
         self.mission_begin_btn = mission_begin_btn
 
-        # refresh
-        _func = lambda: Messagebox.ok(message='Refreshing...')
-        btn = ttk.Button(
-            master=buttonbar,
-            text='刷新',
-            image='refresh',
-            compound=LEFT,
-            command=_func
-        )
-        btn.pack(side=LEFT, ipadx=5, ipady=5, padx=0, pady=1)
+        # # refresh
+        # _func = lambda: Messagebox.ok(message='我也不知道这个要做啥，哈哈哈哈~~')
+        # btn = ttk.Button(
+        #     master=buttonbar,
+        #     text='刷新',
+        #     image='refresh',
+        #     compound=LEFT,
+        #     command=_func
+        # )
+        # btn.pack(side=LEFT, ipadx=5, ipady=5, padx=0, pady=1)
 
         # stop
         _func = lambda: self.stop_mission()
@@ -107,7 +108,7 @@ class MainFrame(ttk.Frame):
         self.mission_stop_btn = mission_stop_btn
 
         # settings
-        _func = lambda: Messagebox.ok(message='Changing settings')
+        _func = lambda: Messagebox.ok(message='啊这，我还不知道这里要做啥，哈哈哈哈哈哈~~')
         btn = ttk.Button(
             master=buttonbar,
             text='设置',
@@ -134,7 +135,7 @@ class MainFrame(ttk.Frame):
             bootstyle=SECONDARY)
 
         custom_font = font.Font(family="微软雅黑", size=10)
-        notice = ttk.ScrolledText(bus_frm, width=30, font=custom_font)
+        notice = ttk.ScrolledText(bus_frm, width=30, font=custom_font, height=20)
 
         notice.insert(ttk.INSERT, '使用教程 ----------\n\n')
         notice.insert(ttk.INSERT, '1、使用前必须安装好Chrome浏览器（谷歌浏览器），暂时不支持其他类型浏览器\n\n')
