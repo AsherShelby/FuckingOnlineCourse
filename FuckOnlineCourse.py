@@ -69,3 +69,5 @@ def begin(dic):
     login(school, username, password, ocr, driver)
     traversal_course(driver, ocr, dic['platform'])
 
+    driver.quit()
+
