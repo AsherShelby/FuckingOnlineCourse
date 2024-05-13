@@ -1,6 +1,7 @@
 import time
 
-from selenium.common import NoSuchElementException
+from selenium.common import NoSuchElementException, StaleElementReferenceException
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 
 
@@ -82,7 +83,9 @@ def traversal_course(driver, ocr, platform):
                         videoSlot = driver.find_element(By.CLASS_NAME, value="detmain-navlist")
                         videoList = videoSlot.find_elements(By.XPATH, value="./*")
                         itemList = videoList[i].find_element(By.CLASS_NAME, value="list").find_elements(By.CLASS_NAME, value="item")
-                        playButton = driver.find_element(By.XPATH, value='//*[@id="videoContent"]/div/div[2]/div[1]/canvas')
+                        playButton = driver.find_element(By.XPATH, value='//*[@id="videoContent"]/div/div[2]/div[1]')
+                        actions = ActionChains(driver)
+                        actions.move_to_element(playButton).perform()
 
                         while True:
                             try:
@@ -100,12 +103,17 @@ def traversal_course(driver, ocr, platform):
                                 print(res)
                                 vertify_input = dialog.find_element(By.CSS_SELECTOR, value='input:not([id="yzCode"])')
                                 vertify_input.send_keys(res)
-                                time.sleep(1)
+                                time.sleep(0.5)
                                 playButton2 = driver.find_element(By.LINK_TEXT, value='开始播放')
                                 playButton2.click()
+                                time.sleep(0.5)
+
+                                if 'none' in playButton.get_attribute('style'):
+                                    print('已开始播放')
+                                    break
                             except:
-                                print('已开始播放')
-                                break
+                                print('无弹窗')
+                                continue
 
                         while True:
                             try:
@@ -113,13 +121,17 @@ def traversal_course(driver, ocr, platform):
                                     raise link_changed("页面已跳转")
 
                                 playingTimeElement = driver.find_element(By.XPATH, value="//*[starts-with(@class, 'timetext')]")
-                                playingTimeText = playingTimeElement.text
-                                textList = playingTimeText.split()
-                                if len(textList) == 0:
-                                    pass
-                                elif textList[0] == textList[2]:
-                                    print('播放完毕！')
-                                    break
+                                try:
+                                    playingTimeText = playingTimeElement.text
+                                    textList = playingTimeText.split()
+                                    if len(textList) == 0:
+                                        pass
+                                    elif textList[0] == textList[2]:
+                                        print('播放完毕！')
+                                        break
+                                except StaleElementReferenceException as e:
+                                    print('未获取到播放时间')
+
                             except NoSuchElementException as e:
                                 print('找不到播放时间元素')
 
