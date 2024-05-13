@@ -34,8 +34,7 @@ def traversal_course(driver, ocr, platform):
 
         no_complete_course.find_element(By.CLASS_NAME, value="name").find_element(By.TAG_NAME, value="a").click()
 
-        continueButton = driver.find_element(By.XPATH,
-                                             value="/html/body/div[3]/div[2]/div/div[1]/div[2]/div[6]/div[1]/a")
+        continueButton = driver.find_element(By.XPATH, value="/html/body/div[3]/div[2]/div/div[1]/div[2]/div[6]/div[1]/a")
         continueButton.click()
 
         while True:

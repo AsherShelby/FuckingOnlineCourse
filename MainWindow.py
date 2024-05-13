@@ -183,9 +183,10 @@ class MainFrame(ttk.Frame):
         self.tv = tv
 
         def on_click_tree(event):
-            item = self.tv.selection()[0]
-            if len(item) == 0:
+            if len(self.tv.selection()) == 0:
                 return
+            item = self.tv.selection()[0]
+
             self.curr_choose_index = self.tv.index(item)
 
             state = self.tv.item(item)
