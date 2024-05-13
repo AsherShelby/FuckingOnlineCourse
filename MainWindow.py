@@ -13,7 +13,7 @@ from tkinter.scrolledtext import ScrolledText
 import FuckOnlineCourse
 import frozen_dir
 from NewMissionWindow import DataEntryForm
-from PIL import ImageTk, Image
+from PIL import ImageTk
 
 PATH = frozen_dir.app_path()
 

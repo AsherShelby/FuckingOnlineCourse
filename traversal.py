@@ -1,6 +1,6 @@
 import time
 
-from selenium.common import NoSuchElementException, ElementNotInteractableException
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 
