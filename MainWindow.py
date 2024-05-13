@@ -144,7 +144,7 @@ class MainFrame(ttk.Frame):
         notice.insert(ttk.INSERT, '4、若需要删除任务，可选中任务后，单击右键再点删除\n\n')
 
         notice.insert(ttk.INSERT, '注意 ----------\n\n')
-        notice.insert(ttk.INSERT, '1、网课网站在凌晨12点以后会将账号强制踢下线，请挑选合适的时间使用\n\n')
+        notice.insert(ttk.INSERT, '1、网课网站有一定概率在凌晨会将账号强制踢下线，请挑选合适的时间使用\n\n')
         notice.insert(ttk.INSERT, '2、进入到有视频的界面以后，如果视频的章节数与你之前刷的不符合，可以手动调整。\n\n')
         notice.insert(ttk.INSERT, '3、本工具仅供学习交流使用，不保证100%不会被检测，请适度使用，如有损失概不负责！\n\n')
 
@@ -253,7 +253,14 @@ class MainFrame(ttk.Frame):
         timestamp = datetime.now().strftime('%Y.%d.%m - %H:%M:%S')
         self.tv.set(selected_item, column='run-time', value=timestamp)
 
-        self.threading_list[self.curr_choose_index].start()
+        try:
+            self.threading_list[self.curr_choose_index].start()
+        except RuntimeError as er:
+            self.threading_list.pop(self.curr_choose_index)
+            t = Thread_with_exception(f'Threading {self.curr_choose_index}', self.mission_list, self.curr_choose_index)
+            t.daemon = True
+            self.threading_list.insert(self.curr_choose_index, t)
+            self.threading_list[self.curr_choose_index].start()
 
     def mission_delete(self):
         if len(self.mission_list) == 0:
@@ -302,7 +309,6 @@ class MainFrame(ttk.Frame):
         self.mission_begin_btn.config(state='normal')
 
         self.threading_list[self.curr_choose_index].killing_self()
-        self.threading_list.pop(self.curr_choose_index)
 
 
 class CollapsingFrame(ttk.Frame):

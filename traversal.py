@@ -1,6 +1,6 @@
 import time
 
-from selenium.common import NoSuchElementException
+from selenium.common import NoSuchElementException, ElementNotInteractableException
 from selenium.webdriver.common.by import By
 
 
@@ -86,8 +86,12 @@ def traversal_course(driver, ocr, platform):
                         playButton = driver.find_element(By.XPATH, value='//*[@id="videoContent"]/div/div[2]/div[1]/canvas')
 
                         while True:
-                            playButton.click()
-                            time.sleep(1)
+                            try:
+                                playButton.click()
+                                time.sleep(1)
+                            except:
+                                print('点击播放按钮异常')
+
                             if browser_url != driver.current_url:
                                 raise link_changed("页面已跳转")
                             try:
