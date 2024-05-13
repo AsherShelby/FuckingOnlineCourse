@@ -77,6 +77,8 @@ def traversal_course(driver, ocr, platform):
                     for j in range(currVideoIndex, len(itemList)):
                         if j != currVideoIndex or isNew:
                             itemList[j].click()
+                            print('播放下一个视频')
+                            browser_url = driver.current_url
                         elif browser_url != driver.current_url:
                             raise link_changed("页面已跳转")
 
@@ -84,19 +86,22 @@ def traversal_course(driver, ocr, platform):
                         videoList = videoSlot.find_elements(By.XPATH, value="./*")
                         itemList = videoList[i].find_element(By.CLASS_NAME, value="list").find_elements(By.CLASS_NAME, value="item")
                         playButton = driver.find_element(By.XPATH, value='//*[@id="videoContent"]/div/div[2]/div[1]')
-                        actions = ActionChains(driver)
-                        actions.move_to_element(playButton).perform()
+                        # actions = ActionChains(driver)
+                        # actions.move_to_element(playButton).perform()
 
                         while True:
                             try:
                                 playButton.click()
-                                time.sleep(1)
+                                time.sleep(0.5)
                             except:
                                 print('点击播放按钮异常')
 
                             if browser_url != driver.current_url:
                                 raise link_changed("页面已跳转")
                             try:
+                                if 'none' in playButton.get_attribute('style'):
+                                    print('已开始播放')
+                                    break
                                 dialog = driver.find_element(By.CSS_SELECTOR, value='[id^="layui-layer"]')
                                 codeImg = driver.find_element(By.ID, value='codeImg').screenshot_as_png
                                 res = ocr.classification(codeImg)
@@ -107,12 +112,8 @@ def traversal_course(driver, ocr, platform):
                                 playButton2 = driver.find_element(By.LINK_TEXT, value='开始播放')
                                 playButton2.click()
                                 time.sleep(0.5)
-
-                                if 'none' in playButton.get_attribute('style'):
-                                    print('已开始播放')
-                                    break
                             except:
-                                print('无弹窗')
+                                print('无弹窗与验证码')
                                 continue
 
                         while True:
@@ -130,7 +131,7 @@ def traversal_course(driver, ocr, platform):
                                         print('播放完毕！')
                                         break
                                 except StaleElementReferenceException as e:
-                                    print('未获取到播放时间')
+                                    print('未获取到播放时间文本')
 
                             except NoSuchElementException as e:
                                 print('找不到播放时间元素')
@@ -141,7 +142,7 @@ def traversal_course(driver, ocr, platform):
                             if browser_url != driver.current_url:
                                 raise link_changed("页面已跳转")
                             if i + 1 < len(videoList):
-                                videoList[i + 1].click()
+                                driver.execute_script("arguments[0].className = 'group two on'", videoList[i+1])
                                 isNew = True
                                 print('展开下一章')
                             else:
