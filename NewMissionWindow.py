@@ -25,8 +25,8 @@ class DataEntryForm(ttk.Frame):
         self.school = ttk.StringVar()
         self.platform = ttk.StringVar()
 
-        school_lst = ['中南林业科技大学涉外学院', '北京嘉华大学工商学院']
-        platform_lst = ['英华学堂', '仓辉教育科技']
+        # school_lst = ['中南林业科技大学涉外学院', '北京嘉华大学工商学院']
+        # platform_lst = ['英华学堂', '仓辉教育科技']
 
         # form header
         hdr_txt = "请输入任务信息："
@@ -34,11 +34,13 @@ class DataEntryForm(ttk.Frame):
         hdr.pack(fill=X, pady=10)
 
         # form entries
+        # self.create_form_combox("学校", self.school, school_lst)
+        # self.create_form_combox("平台：", self.platform, platform_lst)
         self.create_form_entry("任务名称", self.name)
-        self.create_form_combox("学校：", self.school, school_lst)
-        self.create_form_combox("平台：", self.platform, platform_lst)
-        self.create_form_entry("学号：", self.id)
-        self.create_form_entry("密码：", self.password)
+        self.create_form_entry("学校", self.school)
+        self.create_form_entry("平台", self.platform)
+        self.create_form_entry("学号", self.id)
+        self.create_form_entry("密码", self.password)
         self.create_buttonbox()
 
     def create_form_entry(self, label, variable):
@@ -89,10 +91,10 @@ class DataEntryForm(ttk.Frame):
 
     def on_submit(self):
         """Print the contents to console and return the values."""
-        # print("任务名称:", self.name.get())
-        # print("学校:", self.school.get())
-        # print("学号:", self.id.get())
-        # print("密码:", self.password.get())
+        print("任务名称:", self.name.get())
+        print("学校:", self.school.get())
+        print("学号:", self.id.get())
+        print("密码:", self.password.get())
 
         self.mission_infor_dic['name'] = self.name.get()
         self.mission_infor_dic['school'] = self.school.get()
@@ -111,8 +113,6 @@ class DataEntryForm(ttk.Frame):
                 Messagebox.ok(message='我活这么久还是第一次见密码里有中文')
                 return
 
-        if self.platform.get() == '仓辉教育科技':
-            self.mission_infor_dic['school'] += '实训平台'
 
         self.master.quit()
         self.master.destroy()
