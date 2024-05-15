@@ -85,6 +85,8 @@ def traversal_course(driver, ocr, platform):
                         if j != currVideoIndex or isNew:
                             # 等待一段随机时间
                             waitRandomTime()
+                            if browser_url != driver.current_url:
+                                raise link_changed("页面已跳转")
                             itemList[j].click()
                             print('播放下一个视频')
                             browser_url = driver.current_url
@@ -120,10 +122,12 @@ def traversal_course(driver, ocr, platform):
                                 vertify_input = dialog.find_element(By.CSS_SELECTOR, value='input:not([id="yzCode"])')
                                 vertify_input.send_keys(res)
                                 waitRandomTime()
+                                if browser_url != driver.current_url:
+                                    raise link_changed("页面已跳转")
                                 playButton2 = driver.find_element(By.LINK_TEXT, value='开始播放')
                                 playButton2.click()
                                 time.sleep(0.5)
-                            except:
+                            except NoSuchElementException as e:
                                 print('无弹窗与验证码')
                                 continue
 
