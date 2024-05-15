@@ -143,18 +143,18 @@ class MainFrame(ttk.Frame):
 
         notice.insert(ttk.INSERT, '使用教程 ----------\n\n')
         notice.insert(ttk.INSERT, '1、使用前必须安装好Chrome浏览器（谷歌浏览器），暂时不支持其他类型浏览器。\n\n')
-        notice.insert(ttk.INSERT, '2、点击“新建任务”，填好学校和账号等信息，点确定。\n\n')
+        notice.insert(ttk.INSERT, '2、点击“新建任务”，填好学校、平台和账号等信息，点确定。\n\n')
         notice.insert(ttk.INSERT, '3、再在任务栏里选中任务，点击开始任务即可。\n\n')
         notice.insert(ttk.INSERT, '4、若需要删除任务，可选中任务后，单击右键再点删除。\n\n')
 
         notice.insert(ttk.INSERT, '注意 ----------\n\n')
-        notice.insert(ttk.INSERT, '1、使用过程中必须保持屏幕常亮，不能息屏，任务运行过程中打开的浏览器不能最小化，否则会导致操作中断。\n\n')
-        notice.insert(ttk.INSERT, '2、网课网站有一定概率在凌晨会将账号强制踢下线，请挑选合适的时间使用。\n\n')
-        notice.insert(ttk.INSERT, '3、进入到有视频的界面以后，如果视频的章节数与你之前刷的不符合，可以手动调整。\n\n')
-        notice.insert(ttk.INSERT, '4、本工具仅供学习交流使用，不保证100%不会被检测，请适度使用，如有损失概不负责！\n\n')
+        notice.insert(ttk.INSERT, '1、新建任务里的平台需要填入网课登录界面的网址！不要填成首页的网址了！\n\n')
+        notice.insert(ttk.INSERT, '2、使用过程中必须保持屏幕常亮，不能息屏，任务运行过程中打开的浏览器不能最小化，否则会导致操作中断。\n\n')
+        notice.insert(ttk.INSERT, '3、网课网站有一定概率在凌晨或使用很长一段时间后会将账号强制踢下线，请挑选合适的时间使用。\n\n')
+        notice.insert(ttk.INSERT, '4、进入到有视频的界面以后，如果视频的章节数与你之前刷的不符合，可以手动调整，但点击频率不要太快\n\n')
+        notice.insert(ttk.INSERT, '5、本工具仅供学习交流使用，不保证100%不会被检测，请适度使用，如有损失概不负责！\n\n')
 
         notice.insert(ttk.INSERT, '关于 ----------\n\n')
-        notice.insert(ttk.INSERT, '本工具由林科大涉外神秘人士制作，你要问我是谁，欸嘿，不告诉你~\n\n')
         notice.insert(ttk.INSERT, '本工具GitHub项目地址：https://github.com/AsherShelby/FuckingOnlineCourse\n\n')
         notice.insert(ttk.INSERT, '欢迎大家支持！^_^\n\n')
 
