@@ -2,6 +2,7 @@ import matplotlib
 import ddddocr
 import time
 import undetected_chromedriver as uc
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 from traversal import traversal_course
@@ -18,9 +19,14 @@ def find_school_value(school_name, driver):
 
 
 def login(school, username, password, ocr, driver):
-    school_value = find_school_value(school, driver)
-    schoolSelector = driver.find_element(by=By.XPATH, value='//*[@id="schoolId"]')
-    Select(schoolSelector).select_by_value(school_value)
+    xpath = '//*[@id="loginForm"]/div/div[6]/div/input[2]'
+    try:
+        school_value = find_school_value(school, driver)
+        schoolSelector = driver.find_element(by=By.XPATH, value='//*[@id="schoolId"]')
+        Select(schoolSelector).select_by_value(school_value)
+    except NoSuchElementException:
+        print("无需选择学校")
+        xpath = '//*[@id="loginForm"]/div/div[5]/div/input[2]'
 
     username_input = driver.find_element(By.XPATH, value='//*[@id="username"]')
     username_input.send_keys(username)
@@ -36,7 +42,7 @@ def login(school, username, password, ocr, driver):
         res = ocr.classification(image)
         vertify_input = driver.find_element(By.XPATH, value='//*[@id="code"]')
         vertify_input.send_keys(res)
-        loginButton = driver.find_element(By.XPATH, value='//*[@id="loginForm"]/div/div[6]/div/input[2]')
+        loginButton = driver.find_element(By.XPATH, value=xpath)
         loginButton.click()
         time.sleep(1)
         if url == driver.current_url:
@@ -50,10 +56,11 @@ def initial(platform):
     ocr = ddddocr.DdddOcr()
     driver = uc.Chrome(driver_executable_path="./chromedriver.exe")
     print(platform)
-    if platform == '英华学堂':
-        driver.get('https://mooc.yinghuaonline.com/user/login')
-    elif platform == '仓辉教育科技':
-        driver.get('https://shixun.canghuikeji.com/user/login')
+    # if platform == '英华学堂':
+    #     driver.get('https://mooc.yinghuaonline.com/user/login')
+    # elif platform == '仓辉教育科技':
+    #     driver.get('https://shixun.canghuikeji.com/user/login')
+    driver.get(platform)
     driver.implicitly_wait(5)
 
     return driver, ocr

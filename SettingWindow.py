@@ -1,5 +1,4 @@
 import ttkbootstrap as ttk
-from sympy.core.function import Application
 from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox
 
@@ -20,10 +19,10 @@ class SettingForm(ttk.Frame):
         hdr_txt = "输入自动播放下一个视频的等待时间，"
         hdr = ttk.Label(master=self, text=hdr_txt, width=50)
         hdr.pack(fill=X, pady=5)
-        hdr_txt = "程序会根据所给出的时间范围之内取一个随机时间进行等待"
+        hdr_txt = "程序会根据所给出的时间范围之内取一个随机值进行等待"
         hdr = ttk.Label(master=self, text=hdr_txt, width=50)
         hdr.pack(fill=X, pady=5)
-        hdr_txt = "最小等待时间越大越安全，建议尽量调高"
+        hdr_txt = "建议尽量提高最小等待时间，并扩大时间范围，减小被网站检测作弊的概率"
         hdr = ttk.Label(master=self, text=hdr_txt, width=50)
         hdr.pack(fill=X, pady=5)
         hdr_txt = ""

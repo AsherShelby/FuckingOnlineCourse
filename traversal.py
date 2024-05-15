@@ -21,7 +21,7 @@ def waitRandomTime():
     time.sleep(random.uniform(MainWindow.minTime, MainWindow.maxTime))
 
 
-def traversal_course(driver, ocr, platform, waiting_time):
+def traversal_course(driver, ocr, platform):
     while True:
 
         courseL = driver.find_element(By.CLASS_NAME, value="user-course")
