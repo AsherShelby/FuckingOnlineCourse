@@ -15,8 +15,10 @@ import frozen_dir
 from NewMissionWindow import DataEntryForm
 from PIL import ImageTk
 
-PATH = frozen_dir.app_path()
+from SettingWindow import SettingForm
 
+PATH = frozen_dir.app_path()
+minTime, maxTime = 3.0, 5.0
 
 class MainFrame(ttk.Frame):
     tv = None
@@ -29,6 +31,7 @@ class MainFrame(ttk.Frame):
     output_container = None
     after_scroll_text = None
     message_list = []
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -108,7 +111,7 @@ class MainFrame(ttk.Frame):
         self.mission_stop_btn = mission_stop_btn
 
         # settings
-        _func = lambda: Messagebox.ok(message='啊这，我还不知道这里要做啥，哈哈哈哈哈哈~~')
+        _func = lambda: self.click_settings()
         btn = ttk.Button(
             master=buttonbar,
             text='设置',
@@ -281,7 +284,7 @@ class MainFrame(ttk.Frame):
 
         new_mission_window.attributes('-topmost', True)
         DataEntryForm(new_mission_window, mission_infor_dic)
-        new_mission_window.geometry( f'600x400+{(new_mission_window.winfo_screenwidth() - 800) // 2}+{(new_mission_window.winfo_screenheight() - 400) // 2}')
+        new_mission_window.geometry(f'600x400+{(new_mission_window.winfo_screenwidth() - 800) // 2}+{(new_mission_window.winfo_screenheight() - 400) // 2}')
         new_mission_window.mainloop()
         print(mission_infor_dic)
         self.mission_list.append(mission_infor_dic)
@@ -310,6 +313,11 @@ class MainFrame(ttk.Frame):
         self.mission_begin_btn.config(state='normal')
 
         self.threading_list[self.curr_choose_index].killing_self()
+    def click_settings(self):
+        setting_window = ttk.Toplevel("设置", resizable=(False, False))
+        setting_window.attributes('-topmost', True)
+        SettingForm(setting_window)
+        setting_window.mainloop()
 
 
 class CollapsingFrame(ttk.Frame):

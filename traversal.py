@@ -4,6 +4,8 @@ import time
 from selenium.common import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.by import By
 
+import MainWindow
+
 
 class link_changed(Exception):
     def __init__(self, message):
@@ -14,10 +16,12 @@ class traversal_over(Exception):
     def __init__(self, message):
         super().__init__(message)
 
-def waitRandomTime():
-    time.sleep(random.uniform(3, 5))
 
-def traversal_course(driver, ocr, platform):
+def waitRandomTime():
+    time.sleep(random.uniform(MainWindow.minTime, MainWindow.maxTime))
+
+
+def traversal_course(driver, ocr, platform, waiting_time):
     while True:
 
         courseL = driver.find_element(By.CLASS_NAME, value="user-course")
@@ -55,7 +59,8 @@ def traversal_course(driver, ocr, platform):
                     else:
                         currVideoListIndex += 1
 
-                itemList = videoList[currVideoListIndex].find_element(By.CLASS_NAME, value="list").find_elements(By.CLASS_NAME, value="item")
+                itemList = videoList[currVideoListIndex].find_element(By.CLASS_NAME, value="list").find_elements(
+                    By.CLASS_NAME, value="item")
                 for video in itemList:
                     if video.find_element(By.TAG_NAME, value="a").get_attribute("class") == "on":
                         break
@@ -148,7 +153,7 @@ def traversal_course(driver, ocr, platform):
                             if browser_url != driver.current_url:
                                 raise link_changed("页面已跳转")
                             if i + 1 < len(videoList):
-                                driver.execute_script("arguments[0].className = 'group two on'", videoList[i+1])
+                                driver.execute_script("arguments[0].className = 'group two on'", videoList[i + 1])
                                 isNew = True
                                 print('展开下一章')
                             else:
