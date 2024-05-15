@@ -1,7 +1,7 @@
+import random
 import time
 
 from selenium.common import NoSuchElementException, StaleElementReferenceException
-from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 
 
@@ -14,6 +14,8 @@ class traversal_over(Exception):
     def __init__(self, message):
         super().__init__(message)
 
+def waitRandomTime():
+    time.sleep(random.uniform(3, 5))
 
 def traversal_course(driver, ocr, platform):
     while True:
@@ -76,6 +78,8 @@ def traversal_course(driver, ocr, platform):
 
                     for j in range(currVideoIndex, len(itemList)):
                         if j != currVideoIndex or isNew:
+                            # 等待一段随机时间
+                            waitRandomTime()
                             itemList[j].click()
                             print('播放下一个视频')
                             browser_url = driver.current_url
@@ -91,6 +95,8 @@ def traversal_course(driver, ocr, platform):
 
                         while True:
                             try:
+                                # 等待一段随机时间
+                                waitRandomTime()
                                 playButton.click()
                                 time.sleep(0.5)
                             except:
@@ -108,7 +114,7 @@ def traversal_course(driver, ocr, platform):
                                 print(res)
                                 vertify_input = dialog.find_element(By.CSS_SELECTOR, value='input:not([id="yzCode"])')
                                 vertify_input.send_keys(res)
-                                time.sleep(0.5)
+                                waitRandomTime()
                                 playButton2 = driver.find_element(By.LINK_TEXT, value='开始播放')
                                 playButton2.click()
                                 time.sleep(0.5)
