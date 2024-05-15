@@ -12,7 +12,7 @@ def center_window(window, width, height):
 
 if __name__ == '__main__':
     window = ttk.Window()
-    window.title("Fucking网课 v2.1 -------by 林科大涉外某神秘人士")
+    window.title("Fucking网课 v2.1 -------by AsherOne")
     center_window(window, 1360, 790)
     mainWindow = MainFrame(window)
     style = ttk.Style()
