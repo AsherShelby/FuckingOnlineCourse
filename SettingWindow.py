@@ -16,7 +16,7 @@ class SettingForm(ttk.Frame):
         self.maxTime = ttk.StringVar(value="")
 
         # form header
-        hdr_txt = "输入自动播放下一个视频的等待时间，"
+        hdr_txt = "输入刷视频时各种点击操作的间隔时间，"
         hdr = ttk.Label(master=self, text=hdr_txt, width=50)
         hdr.pack(fill=X, pady=5)
         hdr_txt = "程序会根据所给出的时间范围之内取一个随机值进行等待"
