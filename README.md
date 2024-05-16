@@ -1,15 +1,15 @@
 # AsherOne 英华学堂自动刷课
 
-### 声明：
+## 声明：
 本工具基于selenium自动化操作，仅供学习交流使用，如有损失概不负责！<br>
 本工具使用了一系列手段防止被检测，但不保证100%不会被检测到！
 
-### 特性：
+## 特性：
 1、自动登录<br>
 1、自动识别验证码并输入，调用本地库ocr库，不需要第三方接口<br>
 2、自动检测视频是否播放完毕，并跳到下一个视频
 
-### 使用方法：
+## 使用方法：
 <strong>
 0、使用过程中电脑不能息屏，程序打开的浏览器不能最小化，否则操作会中断<br><br>
 1、必须安装Chrome浏览器（谷歌浏览器）<br><br>
@@ -18,14 +18,14 @@
 4、新建任务<br>
 </strong>
 
-![img.png](img.png)<br><br>
+![img.png](img/img.png)<br><br>
 <strong>5、输入学校、平台（注意是登录网址）、学号、密码</strong><br><br>
-![img_1.png](img_1.png)
+![img_1.png](img/img_1.png)
 <strong>6、选中任务，再点击开始任务即可</strong><br><br>
-![img_2.png](img_2.png)
+![img_2.png](img/img_2.png)
 ## 2024-5-15:<br>
-<strong>更新自定义播放下一个视频的等待时间（设置里面</strong><br><br>
-更新可自行输入网课平台 <strong>登录网址</strong><br>
+更新自定义播放下一个视频的等待时间<br><br>
+更新可自行输入网课平台<strong> 登录网址</strong><br>
 <br>
 <br>
 <br>
