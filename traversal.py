@@ -1,5 +1,4 @@
 import random
-import re
 import time
 
 from selenium.common import NoSuchElementException, StaleElementReferenceException
