@@ -36,9 +36,9 @@ def traversal_course(driver, ocr, platform):
                 has_no_complete_course = True
                 break
 
-        if not has_no_complete_course:
-            print('所有课程都已完成，无待刷课程')
-            break
+        # if not has_no_complete_course:
+        #     print('所有课程都已完成，无待刷课程')
+        #     break
 
         no_complete_course.find_element(By.CLASS_NAME, value="name").find_element(By.TAG_NAME, value="a").click()
 
@@ -169,6 +169,6 @@ def traversal_course(driver, ocr, platform):
                 continue
             except traversal_over as o:
                 print('已刷完一门网课')
-                js = f"window.location.replace('{re.match(r'(.*)/login', platform).group(1)}')"
+                js = f"window.location.replace('{platform}')"
                 driver.execute_script(js)
                 break

@@ -76,6 +76,7 @@ def begin(dic):
 
     driver, ocr = initial(platform)
     login(school, username, password, ocr, driver)
+    dic['platform'] = driver.current_url
     traversal_course(driver, ocr, dic['platform'])
 
     driver.quit()
