@@ -1,4 +1,5 @@
 import random
+import re
 import time
 
 from selenium.common import NoSuchElementException, StaleElementReferenceException
@@ -168,8 +169,6 @@ def traversal_course(driver, ocr, platform):
                 continue
             except traversal_over as o:
                 print('已刷完一门网课')
-                js = "window.location.replace('https://swxymooc.csuft.edu.cn/user')"
-                if platform == '仓辉教育科技':
-                    js = "window.location.replace('https://swxyzxshixun.canghuikeji.com/user')"
+                js = f"window.location.replace('{re.match(r'(.*)/login', platform).group(1)}')"
                 driver.execute_script(js)
                 break

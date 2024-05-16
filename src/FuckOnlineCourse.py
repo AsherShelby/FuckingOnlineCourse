@@ -5,6 +5,8 @@ import undetected_chromedriver as uc
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
+
+import frozen_dir
 from traversal import traversal_course
 
 matplotlib.use('Agg')
@@ -54,7 +56,7 @@ def login(school, username, password, ocr, driver):
 
 def initial(platform):
     ocr = ddddocr.DdddOcr()
-    driver = uc.Chrome(driver_executable_path="./chromedriver.exe")
+    driver = uc.Chrome(driver_executable_path=frozen_dir.app_path() + '\\bin\\chromedriver.exe')
     print(platform)
     # if platform == '英华学堂':
     #     driver.get('https://mooc.yinghuaonline.com/user/login')

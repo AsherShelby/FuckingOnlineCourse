@@ -30,8 +30,8 @@ class SettingForm(ttk.Frame):
         hdr.pack(fill=X, pady=5)
 
         # form entries
-        self.create_form_entry("最小等待时间",  self.minTime, MainWindow.minTime)
-        self.create_form_entry("最大等待时间",  self.maxTime, MainWindow.maxTime)
+        self.create_form_entry("最小等待时间", self.minTime, MainWindow.minTime)
+        self.create_form_entry("最大等待时间", self.maxTime, MainWindow.maxTime)
         self.create_buttonbox()
 
     def create_form_entry(self, label, variable, nowValue):
