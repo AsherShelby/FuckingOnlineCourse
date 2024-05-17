@@ -32,7 +32,6 @@ def traversal_course(driver, ocr, platform):
             break
 
         no_complete_course = courseList[cIndex]
-
         if no_complete_course.find_element(By.CLASS_NAME, value="txt").text == "100%":
             cIndex += 1
             continue
