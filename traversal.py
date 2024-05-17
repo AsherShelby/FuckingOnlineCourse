@@ -41,6 +41,7 @@ def traversal_course(driver, ocr, platform):
         if continueButton.text == '尚未开始' or continueButton.text == '已结束':
             driver.back()
             cIndex += 1
+            time.sleep(0.5)
             continue
 
         continueButton.click()
