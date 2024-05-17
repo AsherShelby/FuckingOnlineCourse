@@ -22,26 +22,28 @@ def waitRandomTime():
 
 
 def traversal_course(driver, ocr, platform):
+    cIndex = 0
     while True:
-
         courseL = driver.find_element(By.CLASS_NAME, value="user-course")
         courseList = courseL.find_elements(By.CLASS_NAME, value="item")
-        no_complete_course = courseList[0]
-        has_no_complete_course = False
-        for course in courseList:
-            if course.find_element(By.CLASS_NAME, value="txt").text != "100%":
-                print(course.find_element(By.CLASS_NAME, value="txt").text)
-                no_complete_course = course
-                has_no_complete_course = True
-                break
 
-        if not has_no_complete_course:
-            print('所有课程都已完成，无待刷课程')
+        if cIndex >= len(courseList):
+            print('没有待刷课程')
             break
 
-        no_complete_course.find_element(By.CLASS_NAME, value="name").find_element(By.TAG_NAME, value="a").click()
+        no_complete_course = courseList[cIndex]
 
+        if no_complete_course.find_element(By.CLASS_NAME, value="txt").text == "100%":
+            cIndex += 1
+            continue
+
+        no_complete_course.find_element(By.CLASS_NAME, value="name").find_element(By.TAG_NAME, value="a").click()
         continueButton = driver.find_element(By.XPATH, value="/html/body/div[3]/div[2]/div/div[1]/div[2]/div[6]/div[1]/a")
+        if continueButton.text == '尚未开始' or continueButton.text == '已结束':
+            driver.back()
+            cIndex += 1
+            continue
+
         continueButton.click()
 
         while True:
