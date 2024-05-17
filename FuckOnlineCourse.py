@@ -1,3 +1,5 @@
+import os.path
+
 import matplotlib
 import ddddocr
 import time
@@ -56,7 +58,7 @@ def login(school, username, password, ocr, driver):
 
 def initial(platform):
     ocr = ddddocr.DdddOcr()
-    driver = uc.Chrome(driver_executable_path=frozen_dir.app_path() + '\\bin\\chromedriver.exe')
+    driver = uc.Chrome(driver_executable_path=frozen_dir.app_path() + os.path.sep + 'bin' + os.path.sep + 'chromedriver.exe')
     print(platform)
     # if platform == '英华学堂':
     #     driver.get('https://mooc.yinghuaonline.com/user/login')
@@ -80,4 +82,3 @@ def begin(dic):
     traversal_course(driver, ocr, dic['platform'])
 
     driver.quit()
-

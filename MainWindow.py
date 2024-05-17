@@ -1,4 +1,5 @@
 import ctypes
+import os
 import queue
 import threading
 from datetime import datetime
@@ -54,7 +55,7 @@ class MainFrame(ttk.Frame):
         }
 
         self.photoimages = []
-        imgpath = PATH + '\\assets\\'
+        imgpath = PATH + os.sep + 'assets' + os.sep
         for key, val in image_files.items():
             _path = imgpath + val
             self.photoimages.append(ImageTk.PhotoImage(name=key, file=_path))
@@ -332,8 +333,8 @@ class CollapsingFrame(ttk.Frame):
 
         # widget images
         self.images = [
-            ttk.PhotoImage(file=PATH + '\\assets\\icons8_double_up_24px.png'),
-            ttk.PhotoImage(file=PATH + '\\assets\\icons8_double_right_24px.png')
+            ttk.PhotoImage(file=PATH + os.path.sep + 'assets' + os.path.sep + 'icons8_double_up_24px.png'),
+            ttk.PhotoImage(file=PATH + os.path.sep + 'assets' + os.path.sep + 'icons8_double_right_24px.png')
         ]
 
     def add(self, child, title="", bootstyle=PRIMARY, **kwargs):
