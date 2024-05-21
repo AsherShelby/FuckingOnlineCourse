@@ -24,7 +24,7 @@
 <strong>6、选中任务，再点击开始任务即可</strong><br><br>
 ![img_2.png](img/img_2.png)
 ## 2024-5-15:<br>
-更新自定义播放下一个视频的等待时间<br><br>
+更新自定义点击操作的间隔时间<br><br>
 更新可自行输入网课平台<strong> 登录网址</strong><br>
 <br>
 <br>
