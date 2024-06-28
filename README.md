@@ -10,6 +10,8 @@
 2、自动检测视频是否播放完毕，并跳到下一个视频
 
 ## 使用方法：
+### 使用前先下好与自己chrome浏览器版本相对应的chromedriver(链接：https://googlechromelabs.github.io/chrome-for-testing/#stable)
+### 再替换目录里的chromedriver即可
 <strong>
 0、使用过程中电脑不能息屏，程序打开的浏览器不能最小化，否则操作会中断<br><br>
 1、必须安装Chrome浏览器（谷歌浏览器）<br><br>
